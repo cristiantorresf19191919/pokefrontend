@@ -13,7 +13,10 @@ const GET_POKEMONS = gql`
           name
           number
           imageUrl
-          types
+          abilities {
+            name
+            isHidden
+          }
         }
         cursor
       }

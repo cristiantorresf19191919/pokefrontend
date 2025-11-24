@@ -10,7 +10,10 @@ interface PokemonCardProps {
     name: string;
     number: number;
     imageUrl: string;
-    types: string[];
+    abilities: Array<{
+      name: string;
+      isHidden: boolean;
+    }>;
   };
 }
 
@@ -53,13 +56,14 @@ export const PokemonCard = ({ pokemon }: PokemonCardProps) => {
             #{pokemon.number}
           </Typography>
           <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 1 }}>
-            {pokemon.types.map((type) => (
+            {pokemon.abilities.map((ability) => (
               <Chip
-                key={type}
-                label={type}
+                key={ability.name}
+                label={ability.name}
                 size="small"
-                color="secondary"
+                color={ability.isHidden ? "primary" : "secondary"}
                 variant="outlined"
+                title={ability.isHidden ? "Hidden Ability" : "Regular Ability"}
               />
             ))}
           </Box>

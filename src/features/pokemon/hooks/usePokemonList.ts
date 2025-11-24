@@ -17,7 +17,10 @@ const GET_POKEMONS = graphql(`
           name
           number
           imageUrl
-          types
+          abilities {
+            name
+            isHidden
+          }
         }
         cursor
       }
@@ -34,15 +37,17 @@ export const usePokemonList = (initialData?: GetPokemonsQuery | null) => {
   const client = useApolloClient();
   const hasWrittenInitialData = useRef(false);
   
-  // Write initial server data to cache synchronously for proper SSR hydration
-  if (initialData && !hasWrittenInitialData.current) {
-    client.writeQuery({
-      query: GET_POKEMONS,
-      variables: { first: 20, sortBy: 'number' },
-      data: initialData,
-    });
-    hasWrittenInitialData.current = true;
-  }
+  // Write initial server data to cache for proper SSR hydration
+  useEffect(() => {
+    if (initialData && !hasWrittenInitialData.current) {
+      client.writeQuery({
+        query: GET_POKEMONS,
+        variables: { first: 20, sortBy: 'number' },
+        data: initialData,
+      });
+      hasWrittenInitialData.current = true;
+    }
+  }, [initialData, client]);
 
   // 1. Read Filter State from Zustand
   const { sortBy } = usePokemonFilterStore();

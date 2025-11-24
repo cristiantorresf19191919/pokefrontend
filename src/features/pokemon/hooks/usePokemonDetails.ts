@@ -13,10 +13,18 @@ const GET_POKEMON_DETAILS = graphql(`
       name
       number
       imageUrl
-      types
-      weight
-      height
-      description
+      abilities {
+        name
+        isHidden
+      }
+      moves {
+        name
+        levelLearnedAt
+      }
+      forms {
+        name
+        url
+      }
     }
   }
 `);
@@ -25,15 +33,17 @@ export const usePokemonDetails = (id: number, initialData?: GetPokemonDetailsQue
   const client = useApolloClient();
   const hasWrittenInitialData = useRef(false);
   
-  // Write initial server data to cache synchronously for proper SSR hydration
-  if (initialData && id && !hasWrittenInitialData.current) {
-    client.writeQuery({
-      query: GET_POKEMON_DETAILS,
-      variables: { id },
-      data: initialData,
-    });
-    hasWrittenInitialData.current = true;
-  }
+  // Write initial server data to cache for proper SSR hydration
+  useEffect(() => {
+    if (initialData && id && !hasWrittenInitialData.current) {
+      client.writeQuery({
+        query: GET_POKEMON_DETAILS,
+        variables: { id },
+        data: initialData,
+      });
+      hasWrittenInitialData.current = true;
+    }
+  }, [initialData, id, client]);
 
   const { data, loading, error } = useQuery(GET_POKEMON_DETAILS, {
     variables: { id },

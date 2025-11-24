@@ -6,7 +6,10 @@ query GetPokemons($first: Int, $after: String, $sortBy: String) {
         name
         number
         imageUrl
-        types
+        abilities {
+          name
+          isHidden
+        }
       }
       cursor
     }

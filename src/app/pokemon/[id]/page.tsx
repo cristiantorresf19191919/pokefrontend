@@ -11,10 +11,18 @@ const GET_POKEMON_DETAILS = gql`
       name
       number
       imageUrl
-      types
-      weight
-      height
-      description
+      abilities {
+        name
+        isHidden
+      }
+      moves {
+        name
+        levelLearnedAt
+      }
+      forms {
+        name
+        url
+      }
     }
   }
 `;
@@ -36,7 +44,7 @@ export async function generateMetadata({
     if (data?.pokemon) {
       return {
         title: `${data.pokemon.name} | Pokedex`,
-        description: data.pokemon.description || `Details for Pokemon #${data.pokemon.number}`,
+        description: `Details for Pokemon #${data.pokemon.number} - ${data.pokemon.name}`,
         openGraph: {
           images: [data.pokemon.imageUrl],
         },

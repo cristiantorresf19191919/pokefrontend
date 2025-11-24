@@ -61,52 +61,61 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
             <Typography variant="h6" color="text.secondary" gutterBottom>
               #{pokemon.number}
             </Typography>
-            
-            {pokemon.description && (
-              <Typography variant="body1" paragraph sx={{ mt: 2 }}>
-                {pokemon.description}
-              </Typography>
-            )}
 
             <Box sx={{ mt: 3, mb: 2 }}>
               <Typography variant="h6" gutterBottom>
-                Types
+                Abilities
               </Typography>
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {pokemon.types.map((type) => (
+                {pokemon.abilities.map((ability) => (
                   <Chip
-                    key={type}
-                    label={type}
-                    color="primary"
+                    key={ability.name}
+                    label={ability.name}
+                    color={ability.isHidden ? "primary" : "secondary"}
                     variant="outlined"
                     size="medium"
+                    title={ability.isHidden ? "Hidden Ability" : "Regular Ability"}
                   />
                 ))}
               </Box>
             </Box>
 
-            <Grid container spacing={2} sx={{ mt: 2 }}>
-              {pokemon.height && (
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Height
-                  </Typography>
-                  <Typography variant="h6">
-                    {pokemon.height} m
-                  </Typography>
-                </Grid>
-              )}
-              {pokemon.weight && (
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Weight
-                  </Typography>
-                  <Typography variant="h6">
-                    {pokemon.weight} kg
-                  </Typography>
-                </Grid>
-              )}
-            </Grid>
+            {pokemon.moves && pokemon.moves.length > 0 && (
+              <Box sx={{ mt: 3, mb: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  Moves ({pokemon.moves.length})
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', maxHeight: 200, overflowY: 'auto' }}>
+                  {pokemon.moves.map((move, index) => (
+                    <Chip
+                      key={`${move.name}-${index}`}
+                      label={move.levelLearnedAt ? `${move.name} (Lv. ${move.levelLearnedAt})` : move.name}
+                      size="small"
+                      variant="outlined"
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+
+            {pokemon.forms && pokemon.forms.length > 0 && (
+              <Box sx={{ mt: 3, mb: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  Forms ({pokemon.forms.length})
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {pokemon.forms.map((form, index) => (
+                    <Chip
+                      key={`${form.name}-${index}`}
+                      label={form.name}
+                      size="small"
+                      color="info"
+                      variant="outlined"
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
           </Grid>
         </Grid>
       </Paper>
