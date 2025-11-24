@@ -5,94 +5,187 @@ import {
   Typography,
   Chip,
   CircularProgress,
-  Paper,
-  Grid,
   Container,
-  Divider,
-  alpha,
   Fade,
+  AppBar,
+  Toolbar,
+  IconButton,
+  LinearProgress,
 } from '@mui/material';
 import Image from 'next/image';
 import { usePokemonDetails } from '../hooks/usePokemonDetails';
 import { GetPokemonDetailsQuery } from '@/gql/graphql';
+import { PRIMARY_COLOR, GRAYSCALE, getPokemonTypeColor } from '@/lib/theme/pokemonTypes';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useRouter } from 'next/navigation';
 
 interface PokemonDetailViewProps {
   id: number;
   initialData?: GetPokemonDetailsQuery | null;
 }
 
+// Helper to get a color for the header based on Pokemon number
+const getHeaderColor = (number: number): string => {
+  // Use a simple hash to get a consistent color per Pokemon
+  const colors = [
+    '#74CB48', // Grass
+    '#F57D31', // Fire
+    '#6493EB', // Water
+    '#F9CF30', // Electric
+    '#A7B723', // Bug
+    '#A43E9E', // Poison
+    '#75574C', // Dark
+    '#705598', // Ghost
+    '#AAA67F', // Normal
+  ];
+  return colors[number % colors.length];
+};
+
 export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) => {
   const { pokemon, isLoading, error } = usePokemonDetails(id, initialData);
+  const router = useRouter();
+  const headerColor = pokemon ? getHeaderColor(pokemon.number) : PRIMARY_COLOR;
 
   if (isLoading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <CircularProgress size={48} />
-          <Typography variant="body2" color="text.secondary">
-            Loading Pokémon details...
-          </Typography>
-        </Box>
-      </Container>
+      <Box sx={{ minHeight: '100vh', backgroundColor: GRAYSCALE.white }}>
+        <Container maxWidth="sm" sx={{ py: 8 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <CircularProgress size={48} />
+            <Typography
+              variant="body2"
+              sx={{
+                color: GRAYSCALE.medium,
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+              }}
+            >
+              Loading Pokémon details...
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
     );
   }
 
   if (error || !pokemon) {
     return (
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box
-          sx={{
-            textAlign: 'center',
-            p: 4,
-            borderRadius: 3,
-            background: 'linear-gradient(145deg, rgba(211, 47, 47, 0.1) 0%, rgba(198, 40, 40, 0.05) 100%)',
-            border: '1px solid rgba(211, 47, 47, 0.3)',
-          }}
-        >
-          <Typography variant="h6" color="error" gutterBottom>
-            {error ? 'Error loading Pokémon' : 'Pokémon not found'}
-          </Typography>
-          {error && (
-            <Typography variant="body2" color="text.secondary">
-              {error.message}
+      <Box sx={{ minHeight: '100vh', backgroundColor: GRAYSCALE.white }}>
+        <Container maxWidth="sm" sx={{ py: 8 }}>
+          <Box
+            sx={{
+              textAlign: 'center',
+              p: 4,
+              borderRadius: 2,
+              backgroundColor: GRAYSCALE.white,
+              border: `1px solid ${GRAYSCALE.light}`,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                color: PRIMARY_COLOR,
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+              }}
+              gutterBottom
+            >
+              {error ? 'Error loading Pokémon' : 'Pokémon not found'}
             </Typography>
-          )}
-        </Box>
-      </Container>
+            {error && (
+              <Typography
+                variant="body2"
+                sx={{
+                  color: GRAYSCALE.medium,
+                  fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                }}
+              >
+                {error.message}
+              </Typography>
+            )}
+          </Box>
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 } }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: GRAYSCALE.white }}>
       <Fade in timeout={400}>
         <article itemScope itemType="https://schema.org/Thing">
-          <Paper
+          {/* Colored Header */}
+          <AppBar
+            position="static"
             sx={{
-              p: { xs: 3, md: 5 },
-              background: 'linear-gradient(145deg, #1a1a2e 0%, #151520 100%)',
-              border: '1px solid rgba(100, 181, 246, 0.15)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+              backgroundColor: headerColor,
+              boxShadow: 'none',
+              borderRadius: 0,
             }}
           >
-            <Grid container spacing={{ xs: 3, md: 5 }}>
-            {/* Image Section */}
-            <Grid item xs={12} md={5}>
-              <Box
+            <Toolbar
+              sx={{
+                px: { xs: 2, sm: 3 },
+                py: 2,
+                minHeight: { xs: '64px', sm: '72px' },
+              }}
+            >
+              <IconButton
+                edge="start"
+                onClick={() => router.back()}
                 sx={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '1',
-                  maxHeight: 500,
-                  borderRadius: 3,
-                  overflow: 'hidden',
-                  background: `radial-gradient(circle at 50% 50%, ${alpha('#64b5f6', 0.15)} 0%, transparent 70%)`,
-                  border: `1px solid ${alpha('#64b5f6', 0.2)}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  p: 3,
+                  color: GRAYSCALE.white,
+                  mr: 2,
                 }}
               >
+                <ArrowBackIcon />
+              </IconButton>
+              <Typography
+                variant="h1"
+                component="h1"
+                itemProp="name"
+                sx={{
+                  flex: 1,
+                  fontWeight: 700,
+                  fontSize: { xs: '20px', sm: '24px' },
+                  lineHeight: { xs: '28px', sm: '32px' },
+                  color: GRAYSCALE.white,
+                  textTransform: 'capitalize',
+                  fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                }}
+              >
+                {pokemon.name}
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: '16px', sm: '20px' },
+                  lineHeight: { xs: '24px', sm: '28px' },
+                  color: GRAYSCALE.white,
+                  fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                }}
+                itemProp="identifier"
+              >
+                #{String(pokemon.number).padStart(3, '0')}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+
+          <Container maxWidth="sm" sx={{ px: { xs: 0, sm: 2 }, py: { xs: 2, sm: 3 } }}>
+            {/* Pokemon Image */}
+            <Box
+              sx={{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: '1',
+                maxHeight: { xs: 300, sm: 400 },
+                backgroundColor: GRAYSCALE.background,
+                borderRadius: 0,
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                mb: 3,
+              }}
+            >
               <Image
                 src={pokemon.imageUrl}
                 alt={`${pokemon.name} - Pokemon #${String(pokemon.number).padStart(3, '0')} - Official artwork`}
@@ -101,100 +194,76 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                 priority
                 sizes="(max-width: 768px) 100vw, 500px"
               />
-              </Box>
-            </Grid>
+            </Box>
 
-            {/* Details Section */}
-            <Grid item xs={12} md={7}>
-            <Box>
-              <header>
+            {/* Content Card */}
+            <Box
+              sx={{
+                backgroundColor: GRAYSCALE.white,
+                borderRadius: 2,
+                p: { xs: 2, sm: 3 },
+                boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)',
+              }}
+            >
+              {/* Abilities Section */}
+              {pokemon.abilities && pokemon.abilities.length > 0 && (
                 <Box sx={{ mb: 3 }}>
-                  <Typography
-                    variant="h3"
-                    component="h1"
-                    itemProp="name"
-                    sx={{
-                      fontWeight: 700,
-                      mb: 1,
-                      textTransform: 'capitalize',
-                      background: 'linear-gradient(135deg, #64b5f6 0%, #9be7ff 100%)',
-                      backgroundClip: 'text',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    }}
-                  >
-                    {pokemon.name}
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: 'text.secondary',
-                      fontWeight: 500,
-                      display: 'inline-block',
-                      px: 2,
-                      py: 0.5,
-                      borderRadius: 2,
-                      background: alpha('#64b5f6', 0.1),
-                      border: `1px solid ${alpha('#64b5f6', 0.2)}`,
-                    }}
-                    itemProp="identifier"
-                  >
-                    #{String(pokemon.number).padStart(3, '0')}
-                  </Typography>
-                </Box>
-              </header>
-
-                <Divider sx={{ my: 3, borderColor: alpha('#64b5f6', 0.1) }} />
-
-                {/* Abilities */}
-                {pokemon.abilities && pokemon.abilities.length > 0 && (
-                  <Box sx={{ mb: 4 }}>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 600,
-                        mb: 2,
-                        color: '#9be7ff',
-                      }}
-                    >
-                      Abilities
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-                      {pokemon.abilities.map((ability) => (
-                        <Chip
-                          key={ability.name}
-                          label={ability.name}
-                          size="medium"
-                          sx={{
-                            height: 36,
-                            fontWeight: 500,
-                            background: ability.isHidden
-                              ? alpha('#64b5f6', 0.25)
-                              : alpha('#9be7ff', 0.15),
-                            color: ability.isHidden ? '#9be7ff' : '#b0b0c0',
-                            border: `1px solid ${ability.isHidden ? alpha('#64b5f6', 0.5) : alpha('#9be7ff', 0.3)}`,
-                            '&:hover': {
-                              background: ability.isHidden
-                                ? alpha('#64b5f6', 0.35)
-                                : alpha('#9be7ff', 0.25),
-                            },
-                          }}
-                          title={ability.isHidden ? 'Hidden Ability' : 'Regular Ability'}
-                        />
-                      ))}
-                    </Box>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+                    {pokemon.abilities.map((ability) => (
+                      <Chip
+                        key={ability.name}
+                        label={ability.name}
+                        size="medium"
+                        sx={{
+                          height: 32,
+                          fontWeight: 500,
+                          fontSize: '12px',
+                          lineHeight: '16px',
+                          backgroundColor: GRAYSCALE.background,
+                          color: GRAYSCALE.dark,
+                          border: `1px solid ${GRAYSCALE.light}`,
+                          borderRadius: 1,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                          '&:hover': {
+                            backgroundColor: GRAYSCALE.light,
+                          },
+                        }}
+                        title={ability.isHidden ? 'Hidden Ability' : 'Regular Ability'}
+                      />
+                    ))}
                   </Box>
-                )}
+                </Box>
+              )}
 
-                {/* Moves */}
+              {/* About Section */}
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    lineHeight: '16px',
+                    textAlign: 'center',
+                    mb: 2,
+                    color: GRAYSCALE.dark,
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                  }}
+                >
+                  About
+                </Typography>
+
+                {/* Moves Section */}
                 {pokemon.moves && pokemon.moves.length > 0 && (
-                  <Box sx={{ mb: 4 }}>
+                  <Box sx={{ mb: 2 }}>
                     <Typography
-                      variant="h6"
+                      variant="body2"
                       sx={{
-                        fontWeight: 600,
-                        mb: 2,
-                        color: '#9be7ff',
+                        fontWeight: 500,
+                        fontSize: '12px',
+                        lineHeight: '16px',
+                        color: GRAYSCALE.medium,
+                        mb: 1,
+                        fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                       }}
                     >
                       Moves ({pokemon.moves.length})
@@ -202,17 +271,16 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                     <Box
                       sx={{
                         display: 'flex',
-                        gap: 1,
+                        gap: 0.75,
                         flexWrap: 'wrap',
-                        maxHeight: 300,
+                        maxHeight: 200,
                         overflowY: 'auto',
                         p: 1,
-                        borderRadius: 2,
-                        background: alpha('#64b5f6', 0.03),
-                        border: `1px solid ${alpha('#64b5f6', 0.1)}`,
+                        borderRadius: 1,
+                        backgroundColor: GRAYSCALE.background,
                       }}
                     >
-                      {pokemon.moves.map((move, index) => (
+                      {pokemon.moves.slice(0, 20).map((move, index) => (
                         <Chip
                           key={`${move.name}-${index}`}
                           label={
@@ -222,49 +290,67 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                           }
                           size="small"
                           sx={{
-                            height: 28,
-                            fontSize: '0.75rem',
-                            background: alpha('#64b5f6', 0.1),
-                            color: '#b0b0c0',
-                            border: `1px solid ${alpha('#64b5f6', 0.2)}`,
+                            height: 24,
+                            fontSize: '10px',
+                            lineHeight: '14px',
+                            backgroundColor: GRAYSCALE.white,
+                            color: GRAYSCALE.dark,
+                            border: `1px solid ${GRAYSCALE.light}`,
+                            borderRadius: 1,
+                            fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                             '&:hover': {
-                              background: alpha('#64b5f6', 0.2),
+                              backgroundColor: GRAYSCALE.background,
                             },
                           }}
                         />
                       ))}
+                      {pokemon.moves.length > 20 && (
+                        <Chip
+                          label={`+${pokemon.moves.length - 20} more`}
+                          size="small"
+                          sx={{
+                            height: 24,
+                            fontSize: '10px',
+                            backgroundColor: GRAYSCALE.background,
+                            color: GRAYSCALE.medium,
+                            fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                          }}
+                        />
+                      )}
                     </Box>
                   </Box>
                 )}
 
-                {/* Forms */}
+                {/* Forms Section */}
                 {pokemon.forms && pokemon.forms.length > 0 && (
                   <Box>
                     <Typography
-                      variant="h6"
+                      variant="body2"
                       sx={{
-                        fontWeight: 600,
-                        mb: 2,
-                        color: '#9be7ff',
+                        fontWeight: 500,
+                        fontSize: '12px',
+                        lineHeight: '16px',
+                        color: GRAYSCALE.medium,
+                        mb: 1,
+                        fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                       }}
                     >
                       Forms ({pokemon.forms.length})
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                       {pokemon.forms.map((form, index) => (
                         <Chip
                           key={`${form.name}-${index}`}
                           label={form.name}
-                          size="medium"
+                          size="small"
                           sx={{
-                            height: 36,
-                            fontWeight: 500,
-                            background: alpha('#42a5f5', 0.15),
-                            color: '#9be7ff',
-                            border: `1px solid ${alpha('#42a5f5', 0.3)}`,
-                            '&:hover': {
-                              background: alpha('#42a5f5', 0.25),
-                            },
+                            height: 28,
+                            fontSize: '12px',
+                            backgroundColor: GRAYSCALE.background,
+                            color: GRAYSCALE.dark,
+                            border: `1px solid ${GRAYSCALE.light}`,
+                            borderRadius: 1,
+                            fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                           }}
                         />
                       ))}
@@ -272,13 +358,10 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                   </Box>
                 )}
               </Box>
-            </Grid>
-          </Grid>
-        </Paper>
+            </Box>
+          </Container>
         </article>
       </Fade>
-    </Container>
+    </Box>
   );
 };
-
-

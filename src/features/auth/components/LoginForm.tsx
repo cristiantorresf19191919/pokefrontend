@@ -9,20 +9,38 @@ import {
   Alert,
   Paper,
 } from '@mui/material';
-import { useLogin } from '../hooks/useLogin';
+import { loginAction } from '../actions/login';
 import { useRouter } from 'next/navigation';
+import { useLoadingStore } from '@/lib/loading/useLoadingStore';
 
 export const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading, error } = useLogin();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(username, password);
-    if (success) {
-      router.push('/pokedex');
+    setError(null);
+    setIsLoading(true);
+    setLoading(true);
+
+    try {
+      const result = await loginAction(username, password);
+      
+      if (result.success) {
+        router.push('/pokedex');
+        router.refresh(); // Refresh to update server-side state
+      } else {
+        setError(result.error || 'Login failed');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -62,7 +80,7 @@ export const LoginForm = () => {
           />
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              {error.message}
+              {error}
             </Alert>
           )}
           <Button
@@ -79,5 +97,6 @@ export const LoginForm = () => {
     </Box>
   );
 };
+
 
 

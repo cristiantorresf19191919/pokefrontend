@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import { PokedexView } from '@/features/pokemon/components/PokedexView';
-import { getClient } from '@/lib/apollo/client';
-import { gql } from '@apollo/client';
-import { cookies } from 'next/headers';
+import { executeGraphQL } from '@/lib/graphql/rsc-client';
+import { GetPokemonsQuery } from '@/gql/graphql';
 
-const GET_POKEMONS = gql`
+const GET_POKEMONS_QUERY = `
   query GetPokemons($first: Int, $after: String, $sortBy: String) {
     pokemons(first: $first, after: $after, sortBy: $sortBy) {
       edges {
@@ -31,17 +30,13 @@ const GET_POKEMONS = gql`
 
 export async function generateMetadata(): Promise<Metadata> {
   // Fetch total count for metadata
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
-  
   let totalCount = null;
   try {
-    const { data } = await getClient(token).query({
-      query: GET_POKEMONS,
+    const result = await executeGraphQL<GetPokemonsQuery>({
+      query: GET_POKEMONS_QUERY,
       variables: { first: 1 },
-      fetchPolicy: 'network-only',
     });
-    totalCount = data?.pokemons?.totalCount;
+    totalCount = result.data?.pokemons?.totalCount ?? null;
   } catch (error) {
     console.error('Error fetching metadata:', error);
   }
@@ -71,21 +66,22 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PokedexPage() {
-  // Fetch initial data server-side for SEO
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
-  
-  let initialData = null;
+  // Fetch initial data server-side for SEO using RSC client
+  let initialData: GetPokemonsQuery | null = null;
   try {
-    const { data } = await getClient(token).query({
-      query: GET_POKEMONS,
+    const result = await executeGraphQL<GetPokemonsQuery>({
+      query: GET_POKEMONS_QUERY,
       variables: { 
         first: 20, 
         sortBy: 'number' // Default sort
       },
-      fetchPolicy: 'network-only', // Always fetch fresh data on server
     });
-    initialData = data;
+    
+    if (result.data) {
+      initialData = result.data;
+    } else if (result.errors) {
+      console.error('GraphQL errors fetching initial Pokemon data:', result.errors);
+    }
   } catch (error) {
     console.error('Error fetching initial Pokemon data:', error);
   }

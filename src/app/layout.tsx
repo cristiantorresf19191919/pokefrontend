@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { ThemeRegistry } from "@/lib/theme/ThemeRegistry";
 import { LoadingProvider } from "@/lib/loading/LoadingProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-poppins",
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -85,10 +82,10 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#0a0a0f" />
+        <meta name="theme-color" content="#DC0A2D" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={poppins.variable}>
         <ApolloWrapper>
           <ThemeRegistry>
             <LoadingProvider>

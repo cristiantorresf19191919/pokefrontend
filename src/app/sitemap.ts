@@ -1,9 +1,8 @@
 import { MetadataRoute } from 'next';
-import { getClient } from '@/lib/apollo/client';
-import { gql } from '@apollo/client';
-import { cookies } from 'next/headers';
+import { executeGraphQL } from '@/lib/graphql/rsc-client';
+import { GetPokemonsQuery } from '@/gql/graphql';
 
-const GET_POKEMONS = gql`
+const GET_POKEMONS_QUERY = `
   query GetPokemons($first: Int) {
     pokemons(first: $first) {
       edges {
@@ -37,17 +36,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic Pokemon routes
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
-    
-    const { data } = await getClient(token).query({
-      query: GET_POKEMONS,
+    const result = await executeGraphQL<GetPokemonsQuery>({
+      query: GET_POKEMONS_QUERY,
       variables: { first: 1000 }, // Adjust based on your needs
-      fetchPolicy: 'network-only',
     });
 
-    if (data?.pokemons?.edges) {
-      const pokemonRoutes = data.pokemons.edges.map((edge: { node: { id: number } }) => ({
+    if (result.data?.pokemons?.edges) {
+      const pokemonRoutes = result.data.pokemons.edges.map((edge) => ({
         url: `${baseUrl}/pokemon/${edge.node.id}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,

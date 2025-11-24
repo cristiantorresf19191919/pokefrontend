@@ -14,20 +14,24 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n": typeof types.GetPokemonsDocument,
-    "\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n": typeof types.GetPokemonDetailsDocument,
     "mutation Login($username: String!, $password: String!) {\n  login(username: $username, password: $password) {\n    success\n    token\n    message\n  }\n}": typeof types.LoginDocument,
     "\n  mutation Login($username: String!, $password: String!) {\n    login(username: $username, password: $password) {\n      success\n      token\n      message\n    }\n  }\n": typeof types.LoginDocument,
     "query GetPokemonDetails($id: Int!) {\n  pokemon(id: $id) {\n    id\n    name\n    number\n    imageUrl\n    abilities {\n      name\n      isHidden\n    }\n    moves {\n      name\n      levelLearnedAt\n    }\n    forms {\n      name\n      url\n    }\n  }\n}": typeof types.GetPokemonDetailsDocument,
     "query GetPokemons($first: Int, $after: String, $sortBy: String) {\n  pokemons(first: $first, after: $after, sortBy: $sortBy) {\n    edges {\n      node {\n        id\n        name\n        number\n        imageUrl\n        abilities {\n          name\n          isHidden\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    totalCount\n  }\n}": typeof types.GetPokemonsDocument,
+    "query SearchPokemon($query: String!) {\n  searchPokemon(query: $query) {\n    id\n    name\n    imageUrl\n  }\n}": typeof types.SearchPokemonDocument,
+    "\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n": typeof types.GetPokemonDetailsDocument,
+    "\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n": typeof types.GetPokemonsDocument,
+    "\n  query SearchPokemon($query: String!) {\n    searchPokemon(query: $query) {\n      id\n      name\n      imageUrl\n    }\n  }\n": typeof types.SearchPokemonDocument,
 };
 const documents: Documents = {
-    "\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n": types.GetPokemonsDocument,
-    "\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n": types.GetPokemonDetailsDocument,
     "mutation Login($username: String!, $password: String!) {\n  login(username: $username, password: $password) {\n    success\n    token\n    message\n  }\n}": types.LoginDocument,
     "\n  mutation Login($username: String!, $password: String!) {\n    login(username: $username, password: $password) {\n      success\n      token\n      message\n    }\n  }\n": types.LoginDocument,
     "query GetPokemonDetails($id: Int!) {\n  pokemon(id: $id) {\n    id\n    name\n    number\n    imageUrl\n    abilities {\n      name\n      isHidden\n    }\n    moves {\n      name\n      levelLearnedAt\n    }\n    forms {\n      name\n      url\n    }\n  }\n}": types.GetPokemonDetailsDocument,
     "query GetPokemons($first: Int, $after: String, $sortBy: String) {\n  pokemons(first: $first, after: $after, sortBy: $sortBy) {\n    edges {\n      node {\n        id\n        name\n        number\n        imageUrl\n        abilities {\n          name\n          isHidden\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    totalCount\n  }\n}": types.GetPokemonsDocument,
+    "query SearchPokemon($query: String!) {\n  searchPokemon(query: $query) {\n    id\n    name\n    imageUrl\n  }\n}": types.SearchPokemonDocument,
+    "\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n": types.GetPokemonDetailsDocument,
+    "\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n": types.GetPokemonsDocument,
+    "\n  query SearchPokemon($query: String!) {\n    searchPokemon(query: $query) {\n      id\n      name\n      imageUrl\n    }\n  }\n": types.SearchPokemonDocument,
 };
 
 /**
@@ -47,14 +51,6 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function graphql(source: "mutation Login($username: String!, $password: String!) {\n  login(username: $username, password: $password) {\n    success\n    token\n    message\n  }\n}"): (typeof documents)["mutation Login($username: String!, $password: String!) {\n  login(username: $username, password: $password) {\n    success\n    token\n    message\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -68,6 +64,22 @@ export function graphql(source: "query GetPokemonDetails($id: Int!) {\n  pokemon
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "query GetPokemons($first: Int, $after: String, $sortBy: String) {\n  pokemons(first: $first, after: $after, sortBy: $sortBy) {\n    edges {\n      node {\n        id\n        name\n        number\n        imageUrl\n        abilities {\n          name\n          isHidden\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    totalCount\n  }\n}"): (typeof documents)["query GetPokemons($first: Int, $after: String, $sortBy: String) {\n  pokemons(first: $first, after: $after, sortBy: $sortBy) {\n    edges {\n      node {\n        id\n        name\n        number\n        imageUrl\n        abilities {\n          name\n          isHidden\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    totalCount\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query SearchPokemon($query: String!) {\n  searchPokemon(query: $query) {\n    id\n    name\n    imageUrl\n  }\n}"): (typeof documents)["query SearchPokemon($query: String!) {\n  searchPokemon(query: $query) {\n    id\n    name\n    imageUrl\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetPokemonDetails($id: Int!) {\n    pokemon(id: $id) {\n      id\n      name\n      number\n      imageUrl\n      abilities {\n        name\n        isHidden\n      }\n      moves {\n        name\n        levelLearnedAt\n      }\n      forms {\n        name\n        url\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  query GetPokemons($first: Int, $after: String, $sortBy: String) {\n    pokemons(first: $first, after: $after, sortBy: $sortBy) {\n      edges {\n        node {\n          id\n          name\n          number\n          imageUrl\n          abilities {\n            name\n            isHidden\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n      totalCount\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query SearchPokemon($query: String!) {\n    searchPokemon(query: $query) {\n      id\n      name\n      imageUrl\n    }\n  }\n"): (typeof documents)["\n  query SearchPokemon($query: String!) {\n    searchPokemon(query: $query) {\n      id\n      name\n      imageUrl\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

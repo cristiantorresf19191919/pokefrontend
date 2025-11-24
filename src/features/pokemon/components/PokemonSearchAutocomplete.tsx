@@ -7,7 +7,6 @@ import {
   Paper,
   Typography,
   CircularProgress,
-  alpha,
   ListItem,
   ListItemAvatar,
   Avatar,
@@ -20,7 +19,8 @@ import { usePokemonSearch } from '../hooks/usePokemonSearch';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
+import CloseIcon from '@mui/icons-material/Close';
+import { PRIMARY_COLOR, GRAYSCALE } from '@/lib/theme/pokemonTypes';
 
 export const PokemonSearchAutocomplete = () => {
   const { searchQuery, setSearchQuery, results, isLoading, hasResults, clearSearch } = usePokemonSearch();
@@ -49,8 +49,8 @@ export const PokemonSearchAutocomplete = () => {
           component="span"
           sx={{
             fontWeight: 700,
-            color: '#9be7ff',
-            background: alpha('#64b5f6', 0.2),
+            color: PRIMARY_COLOR,
+            backgroundColor: 'rgba(220, 10, 45, 0.1)',
             borderRadius: 0.5,
             px: 0.5,
           }}
@@ -97,29 +97,28 @@ export const PokemonSearchAutocomplete = () => {
           size="small"
           sx={{
             '& .MuiOutlinedInput-root': {
-              backgroundColor: alpha('#64b5f6', 0.08),
-              borderRadius: 2.5,
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              backdropFilter: 'blur(10px)',
+              backgroundColor: GRAYSCALE.white,
+              borderRadius: 2,
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               '& fieldset': {
-                borderColor: alpha('#64b5f6', 0.3),
-                borderWidth: 1.5,
-                transition: 'all 0.3s ease',
+                borderColor: GRAYSCALE.light,
+                borderWidth: 1,
+                transition: 'all 0.2s ease',
               },
               '&:hover fieldset': {
-                borderColor: alpha('#64b5f6', 0.5),
-                boxShadow: `0 0 0 2px ${alpha('#64b5f6', 0.1)}`,
+                borderColor: GRAYSCALE.medium,
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#64b5f6',
+                borderColor: PRIMARY_COLOR,
                 borderWidth: 2,
-                boxShadow: `0 0 0 4px ${alpha('#64b5f6', 0.15)}, 0 4px 12px ${alpha('#64b5f6', 0.2)}`,
               },
               '& input': {
-                color: '#e8e8f0',
-                fontWeight: 500,
+                color: GRAYSCALE.dark,
+                fontWeight: 400,
+                fontSize: '14px',
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                 '&::placeholder': {
-                  color: alpha('#b0b0c0', 0.6),
+                  color: GRAYSCALE.medium,
                   opacity: 1,
                   fontWeight: 400,
                 },
@@ -134,7 +133,7 @@ export const PokemonSearchAutocomplete = () => {
                   display: 'flex',
                   alignItems: 'center',
                   mr: 1,
-                  color: alpha('#64b5f6', 0.7),
+                  color: GRAYSCALE.medium,
                 }}
               >
                 <SearchIcon fontSize="small" />
@@ -146,7 +145,7 @@ export const PokemonSearchAutocomplete = () => {
                   <CircularProgress
                     size={18}
                     sx={{
-                      color: '#64b5f6',
+                      color: PRIMARY_COLOR,
                       mr: 1,
                     }}
                   />
@@ -164,18 +163,18 @@ export const PokemonSearchAutocomplete = () => {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      color: alpha('#b0b0c0', 0.7),
+                      color: GRAYSCALE.medium,
                       mr: 0.5,
                       p: 0.5,
                       borderRadius: 1,
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        color: '#e8e8f0',
-                        background: alpha('#64b5f6', 0.1),
+                        color: GRAYSCALE.dark,
+                        backgroundColor: GRAYSCALE.background,
                       },
                     }}
                   >
-                    <ClearIcon fontSize="small" />
+                    <CloseIcon fontSize="small" />
                   </Box>
                 )}
                 {params.InputProps.endAdornment}
@@ -193,7 +192,7 @@ export const PokemonSearchAutocomplete = () => {
             sx={{
               cursor: 'pointer',
               '&:hover': {
-                backgroundColor: alpha('#64b5f6', 0.1),
+                backgroundColor: GRAYSCALE.background,
               },
               py: 1.5,
             }}
@@ -203,8 +202,8 @@ export const PokemonSearchAutocomplete = () => {
                 sx={{
                   width: 48,
                   height: 48,
-                  bgcolor: alpha('#64b5f6', 0.1),
-                  border: `1px solid ${alpha('#64b5f6', 0.2)}`,
+                  bgcolor: GRAYSCALE.background,
+                  border: `1px solid ${GRAYSCALE.light}`,
                 }}
               >
                 <Box
@@ -227,12 +226,14 @@ export const PokemonSearchAutocomplete = () => {
               primary={
                 <Typography
                   sx={{
-                    fontWeight: 600,
-                    color: '#e8e8f0',
+                    fontWeight: 500,
+                    color: GRAYSCALE.dark,
                     textTransform: 'capitalize',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1,
+                    fontSize: '14px',
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                   }}
                 >
                   {highlightMatch(option.name, searchQuery)}
@@ -245,11 +246,12 @@ export const PokemonSearchAutocomplete = () => {
                     size="small"
                     sx={{
                       height: 20,
-                      fontSize: '0.7rem',
-                      fontWeight: 600,
-                      background: alpha('#64b5f6', 0.15),
-                      color: '#9be7ff',
-                      border: `1px solid ${alpha('#64b5f6', 0.3)}`,
+                      fontSize: '10px',
+                      fontWeight: 500,
+                      background: GRAYSCALE.background,
+                      color: GRAYSCALE.medium,
+                      border: `1px solid ${GRAYSCALE.light}`,
+                      fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                     }}
                   />
                 </Box>
@@ -263,31 +265,31 @@ export const PokemonSearchAutocomplete = () => {
           <Paper
             {...other}
             sx={{
-              background: 'linear-gradient(145deg, #1a1a2e 0%, #151520 100%)',
-              border: `1px solid ${alpha('#64b5f6', 0.25)}`,
-              boxShadow: '0 12px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(100, 181, 246, 0.1)',
-              mt: 1.5,
-              maxHeight: 450,
+              backgroundColor: GRAYSCALE.white,
+              border: `1px solid ${GRAYSCALE.light}`,
+              boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)',
+              mt: 1,
+              maxHeight: 400,
               overflow: 'auto',
-              backdropFilter: 'blur(20px)',
               '& .MuiAutocomplete-listbox': {
                 p: 0.5,
               },
               '& .MuiAutocomplete-noOptions': {
-                color: '#b0b0c0',
+                color: GRAYSCALE.medium,
                 py: 4,
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
               },
               '&::-webkit-scrollbar': {
                 width: '8px',
               },
               '&::-webkit-scrollbar-track': {
-                background: alpha('#64b5f6', 0.05),
+                background: GRAYSCALE.background,
               },
               '&::-webkit-scrollbar-thumb': {
-                background: alpha('#64b5f6', 0.3),
+                background: GRAYSCALE.medium,
                 borderRadius: '4px',
                 '&:hover': {
-                  background: alpha('#64b5f6', 0.5),
+                  background: GRAYSCALE.dark,
                 },
               },
             }}
@@ -302,8 +304,9 @@ export const PokemonSearchAutocomplete = () => {
             <Typography
               variant="body2"
               sx={{
-                color: alpha('#b0b0c0', 0.8),
+                color: GRAYSCALE.medium,
                 fontWeight: 500,
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
               }}
             >
               No Pokemon found for "{searchQuery}"
@@ -311,9 +314,10 @@ export const PokemonSearchAutocomplete = () => {
             <Typography
               variant="caption"
               sx={{
-                color: alpha('#b0b0c0', 0.6),
+                color: GRAYSCALE.medium,
                 mt: 1,
                 display: 'block',
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
               }}
             >
               Try a different search term
@@ -324,15 +328,16 @@ export const PokemonSearchAutocomplete = () => {
             <SearchIcon
               sx={{
                 fontSize: 48,
-                color: alpha('#64b5f6', 0.3),
+                color: GRAYSCALE.light,
                 mb: 1,
               }}
             />
             <Typography
               variant="body2"
               sx={{
-                color: alpha('#b0b0c0', 0.8),
+                color: GRAYSCALE.medium,
                 fontWeight: 500,
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
               }}
             >
               Type at least 2 characters to search
@@ -340,9 +345,10 @@ export const PokemonSearchAutocomplete = () => {
             <Typography
               variant="caption"
               sx={{
-                color: alpha('#b0b0c0', 0.6),
+                color: GRAYSCALE.medium,
                 mt: 0.5,
                 display: 'block',
+                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
               }}
             >
               Search by Pokemon name
@@ -357,15 +363,21 @@ export const PokemonSearchAutocomplete = () => {
           padding: '6px 12px',
         },
         '& .MuiAutocomplete-tag': {
-          background: alpha('#64b5f6', 0.2),
-          color: '#9be7ff',
-          border: `1px solid ${alpha('#64b5f6', 0.4)}`,
+          background: 'rgba(220, 10, 45, 0.1)',
+          color: PRIMARY_COLOR,
+          border: `1px solid ${PRIMARY_COLOR}`,
         },
       }}
       loadingText={
         <Box sx={{ textAlign: 'center', py: 2 }}>
-          <CircularProgress size={20} sx={{ color: '#64b5f6', mb: 1 }} />
-          <Typography variant="caption" sx={{ color: alpha('#b0b0c0', 0.8) }}>
+          <CircularProgress size={20} sx={{ color: PRIMARY_COLOR, mb: 1 }} />
+          <Typography
+            variant="caption"
+            sx={{
+              color: GRAYSCALE.medium,
+              fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+            }}
+          >
             Searching...
           </Typography>
         </Box>

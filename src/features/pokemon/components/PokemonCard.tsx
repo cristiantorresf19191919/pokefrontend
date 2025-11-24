@@ -1,8 +1,9 @@
 'use client';
 
-import { Card, CardContent, CardMedia, Typography, Chip, Box, alpha } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
+import { GRAYSCALE } from '@/lib/theme/pokemonTypes';
 
 interface PokemonCardProps {
   pokemon: {
@@ -27,144 +28,89 @@ export const PokemonCard = ({ pokemon }: PokemonCardProps) => {
           flexDirection: 'column',
           position: 'relative',
           overflow: 'hidden',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          backgroundColor: GRAYSCALE.white,
+          borderRadius: 2,
+          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            transform: 'translateY(-8px) scale(1.02)',
-            '& .pokemon-image': {
-              transform: 'scale(1.1)',
-            },
-            '& .pokemon-number': {
-              opacity: 1,
-            },
+            boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)',
+            transform: 'translateY(-2px)',
           },
         }}
       >
-        {/* Number Badge */}
+        {/* Number Badge - Top Right */}
         <Box
-          className="pokemon-number"
           sx={{
             position: 'absolute',
-            top: 12,
-            right: 12,
+            top: 8,
+            right: 8,
             zIndex: 1,
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 2,
-            background: alpha('#64b5f6', 0.2),
-            backdropFilter: 'blur(10px)',
-            border: `1px solid ${alpha('#64b5f6', 0.3)}`,
-            opacity: 0.7,
-            transition: 'opacity 0.3s ease',
           }}
         >
           <Typography
             variant="caption"
             sx={{
               fontWeight: 700,
-              color: '#9be7ff',
-              fontSize: '0.75rem',
+              fontSize: '10px',
+              lineHeight: '16px',
+              color: GRAYSCALE.medium,
+              fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
             }}
           >
             #{String(pokemon.number).padStart(3, '0')}
           </Typography>
         </Box>
 
+        {/* Pokemon Image Area - White Background */}
         <CardMedia
-          className="pokemon-image"
           sx={{
             position: 'relative',
             width: '100%',
-            height: 240,
-            backgroundColor: alpha('#64b5f6', 0.03),
-            backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(100, 181, 246, 0.1) 0%, transparent 70%)',
-            transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+            height: { xs: 140, sm: 160 },
+            backgroundColor: GRAYSCALE.white,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            p: 2,
+            p: 1,
           }}
         >
           <Image
             src={pokemon.imageUrl}
             alt={`${pokemon.name} - Pokemon #${String(pokemon.number).padStart(3, '0')}`}
             fill
-            style={{ objectFit: 'contain', padding: '16px' }}
+            style={{ objectFit: 'contain', padding: '8px' }}
             priority={false}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
           />
         </CardMedia>
+
+        {/* Gray Footer with Pokemon Name */}
         <CardContent
           sx={{
-            flexGrow: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            p: 2.5,
-            pt: 2,
+            backgroundColor: GRAYSCALE.background,
+            p: 1.5,
+            pt: 1,
+            flexGrow: 0,
+            '&:last-child': {
+              pb: 1.5,
+            },
           }}
         >
           <Typography
-            variant="h6"
+            variant="body1"
             component="div"
             sx={{
-              fontWeight: 600,
-              mb: 0.5,
+              fontWeight: 400,
+              fontSize: '12px',
+              lineHeight: '16px',
+              textAlign: 'center',
               textTransform: 'capitalize',
-              background: 'linear-gradient(135deg, #e8e8f0 0%, #b0b0c0 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: GRAYSCALE.dark,
+              fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
             }}
           >
             {pokemon.name}
           </Typography>
-          {pokemon.abilities.length > 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                gap: 0.75,
-                flexWrap: 'wrap',
-                mt: 'auto',
-                pt: 1.5,
-              }}
-            >
-              {pokemon.abilities.slice(0, 2).map((ability) => (
-                <Chip
-                  key={ability.name}
-                  label={ability.name}
-                  size="small"
-                  sx={{
-                    height: 24,
-                    fontSize: '0.7rem',
-                    fontWeight: 500,
-                    background: ability.isHidden
-                      ? alpha('#64b5f6', 0.2)
-                      : alpha('#9be7ff', 0.15),
-                    color: ability.isHidden ? '#9be7ff' : '#b0b0c0',
-                    border: `1px solid ${ability.isHidden ? alpha('#64b5f6', 0.4) : alpha('#9be7ff', 0.3)}`,
-                    '&:hover': {
-                      background: ability.isHidden
-                        ? alpha('#64b5f6', 0.3)
-                        : alpha('#9be7ff', 0.25),
-                    },
-                  }}
-                  title={ability.isHidden ? 'Hidden Ability' : 'Regular Ability'}
-                />
-              ))}
-              {pokemon.abilities.length > 2 && (
-                <Chip
-                  label={`+${pokemon.abilities.length - 2}`}
-                  size="small"
-                  sx={{
-                    height: 24,
-                    fontSize: '0.7rem',
-                    background: alpha('#64b5f6', 0.1),
-                    color: '#b0b0c0',
-                    border: `1px solid ${alpha('#64b5f6', 0.2)}`,
-                  }}
-                />
-              )}
-            </Box>
-          )}
         </CardContent>
       </Card>
     </Link>

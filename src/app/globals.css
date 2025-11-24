@@ -1,14 +1,16 @@
 :root {
-  --background: #0a0a0f;
-  --foreground: #e8e8f0;
-  --secondary-bg: #151520;
-  --accent-blue: #64b5f6;
-  --accent-blue-light: #9be7ff;
-  --accent-blue-dark: #1976d2;
+  --primary: #DC0A2D;
+  --primary-light: #FF3D4F;
+  --primary-dark: #B0081F;
+  --grayscale-dark: #212121;
+  --grayscale-medium: #666666;
+  --grayscale-light: #E0E0E0;
+  --grayscale-background: #EFEFEF;
+  --grayscale-white: #FFFFFF;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -18,10 +20,9 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  background-image: linear-gradient(135deg, #0a0a0f 0%, #151520 100%);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--grayscale-dark);
+  background: var(--grayscale-white);
+  font-family: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -34,41 +35,41 @@ body {
 }
 
 a {
-  color: var(--accent-blue);
+  color: var(--primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--accent-blue-light);
+  color: var(--primary-dark);
 }
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0f;
+  background: var(--grayscale-background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 181, 246, 0.3);
-  border-radius: 5px;
+  background: var(--grayscale-medium);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 181, 246, 0.5);
+  background: var(--grayscale-dark);
 }
 
 /* Selection styling */
 ::selection {
-  background: rgba(100, 181, 246, 0.3);
-  color: #ffffff;
+  background: rgba(220, 10, 45, 0.2);
+  color: var(--grayscale-dark);
 }
 
 ::-moz-selection {
-  background: rgba(100, 181, 246, 0.3);
-  color: #ffffff;
+  background: rgba(220, 10, 45, 0.2);
+  color: var(--grayscale-dark);
 }

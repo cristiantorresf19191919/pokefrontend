@@ -1,9 +1,9 @@
 import { ApolloClient, InMemoryCache, HttpLink, from, ApolloLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import Cookies from 'js-cookie';
 
+// Point to the Next.js proxy route handler instead of Spring Boot directly
+// The proxy will handle authentication via HttpOnly cookies
 const httpLink = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:8082/graphql',
+  uri: '/api/graphql',
 });
 
 // Global loading state reference for Apollo link
@@ -51,46 +51,29 @@ const loadingLink = new ApolloLink((operation, forward) => {
   });
 });
 
-// Auth link to add token from cookies (client-side only)
-const authLink = setContext((_, { headers }) => {
-  let token: string | undefined;
-  
-  if (typeof window !== 'undefined') {
-    // Client-side: get from js-cookie
-    token = Cookies.get('auth_token');
-  }
-
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  };
-});
-
 // Client-side Apollo Client
+// Note: No auth link needed - the /api/graphql proxy handles authentication
+// via HttpOnly cookies automatically
 export function createApolloClient() {
   return new ApolloClient({
-    link: from([loadingLink, authLink, httpLink]),
+    link: from([loadingLink, httpLink]),
     cache: new InMemoryCache(),
     ssrMode: typeof window === 'undefined',
   });
 }
 
-// Server-side Apollo Client (for RSC)
+// Note: Server-side GraphQL requests should use the RSC client (lib/graphql/rsc-client.ts)
+// instead of Apollo Client for better Next.js App Router compatibility
+// This function is kept for backward compatibility but is deprecated
 export function getClient(token?: string) {
-  // Create auth link for server-side with token
-  const serverAuthLink = setContext((_, { headers }) => ({
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  }));
-
-  // Create a new client for each server-side request
-  // This ensures we don't share state between requests
+  console.warn(
+    'getClient() is deprecated. Use executeGraphQL from lib/graphql/rsc-client.ts for server-side requests.'
+  );
+  
+  // For backward compatibility, create a client that points to the proxy
+  // but this should not be used in new code
   const client = new ApolloClient({
-    link: from([serverAuthLink, httpLink]),
+    link: httpLink,
     cache: new InMemoryCache(),
     ssrMode: true,
   });
