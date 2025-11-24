@@ -4,6 +4,7 @@ import "./globals.css";
 import { ApolloWrapper } from "@/lib/apollo/ApolloWrapper";
 import { ThemeRegistry } from "@/lib/theme/ThemeRegistry";
 import { LoadingProvider } from "@/lib/loading/LoadingProvider";
+import { AuthProvider } from "@/lib/auth/AuthProvider";
 
 const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
@@ -89,7 +90,9 @@ export default function RootLayout({
         <ApolloWrapper>
           <ThemeRegistry>
             <LoadingProvider>
-              {children}
+              <AuthProvider>
+                {children}
+              </AuthProvider>
             </LoadingProvider>
           </ThemeRegistry>
         </ApolloWrapper>

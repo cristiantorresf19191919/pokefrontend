@@ -1,10 +1,13 @@
 'use client';
 
-import { Box, Select, MenuItem, Button, CircularProgress, Typography, Container, Fade, AppBar, Toolbar } from '@mui/material';
+import { useState } from 'react';
+import { Box, Button, CircularProgress, Typography, Container, Fade, AppBar, Toolbar } from '@mui/material';
+import SortIcon from '@mui/icons-material/Sort';
 import { usePokemonList } from '../hooks/usePokemonList';
 import { usePokemonFilterStore } from '../stores/usePokemonFilterStore';
 import { PokemonCard } from './PokemonCard';
 import { PokemonSearchAutocomplete } from './PokemonSearchAutocomplete';
+import { SortDialog } from './SortDialog';
 import { GetPokemonsQuery } from '@/gql/graphql';
 import { PRIMARY_COLOR, GRAYSCALE } from '@/lib/theme/pokemonTypes';
 
@@ -15,7 +18,8 @@ interface PokedexViewProps {
 export const PokedexView = ({ initialData }: PokedexViewProps) => {
   // Access Logic Layers
   const { pokemons, loadMore, isLoading, hasNextPage, error } = usePokemonList(initialData);
-  const { sortBy, setSortBy } = usePokemonFilterStore();
+  const { sortBy } = usePokemonFilterStore();
+  const [sortDialogOpen, setSortDialogOpen] = useState(false);
 
   if (error) {
     return (
@@ -131,26 +135,29 @@ export const PokedexView = ({ initialData }: PokedexViewProps) => {
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <PokemonSearchAutocomplete />
           </Box>
-          <Select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'name' | 'number')}
-            size="small"
+          <Button
+            variant="outlined"
+            onClick={() => setSortDialogOpen(true)}
+            startIcon={<SortIcon />}
             sx={{
               minWidth: { xs: '100%', sm: 140 },
               backgroundColor: GRAYSCALE.white,
-              '& .MuiSelect-select': {
-                py: 1.5,
-                fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+              borderColor: GRAYSCALE.light,
+              color: GRAYSCALE.dark,
+              textTransform: 'none',
+              fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+              '&:hover': {
+                borderColor: PRIMARY_COLOR,
+                backgroundColor: GRAYSCALE.white,
               },
             }}
           >
-            <MenuItem value="number" sx={{ fontFamily: 'var(--font-poppins), "Poppins", sans-serif' }}>
-              Sort by ID
-            </MenuItem>
-            <MenuItem value="name" sx={{ fontFamily: 'var(--font-poppins), "Poppins", sans-serif' }}>
-              Sort by Name
-            </MenuItem>
-          </Select>
+            Sort: {sortBy === 'number' ? 'Number' : 'Name'}
+          </Button>
+          <SortDialog
+            open={sortDialogOpen}
+            onClose={() => setSortDialogOpen(false)}
+          />
         </Box>
 
         {/* Grid Layout */}
@@ -197,7 +204,7 @@ export const PokedexView = ({ initialData }: PokedexViewProps) => {
               gap: { xs: 1.5, sm: 2, md: 2.5 },
             }}
           >
-            {pokemons.map((pokemon, index) => (
+            {pokemons.map((pokemon: { id: number; name: string; number: number; imageUrl: string; abilities: Array<{ name: string; isHidden: boolean }> }, index: number) => (
               <Fade in timeout={300 + index * 50} key={pokemon.id}>
                 <Box>
                   <PokemonCard pokemon={pokemon} />

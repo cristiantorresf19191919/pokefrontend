@@ -37,133 +37,185 @@ export const getPokemonTypeColor = (type: string): string => {
   return POKEMON_TYPE_COLORS[type.toLowerCase()] || POKEMON_TYPE_COLORS.normal;
 };
 
-// Pokemon number to type mapping (for Pokemon without type in API)
-// This is a basic mapping for common Pokemon - can be expanded
-export const getPokemonTypeByNumber = (number: number): string => {
-  const typeMap: Record<number, string> = {
+// Pokemon number to types mapping (for Pokemon without type in API)
+// Returns array of types for dual-type Pokemon
+export const getPokemonTypesByNumber = (number: number): string[] => {
+  const typeMap: Record<number, string[]> = {
     // Generation 1 Starters
-    1: 'grass',   // Bulbasaur
-    2: 'grass',   // Ivysaur
-    3: 'grass',   // Venusaur
-    4: 'fire',    // Charmander
-    5: 'fire',    // Charmeleon
-    6: 'fire',    // Charizard
-    7: 'water',   // Squirtle
-    8: 'water',   // Wartortle
-    9: 'water',   // Blastoise
+    1: ['grass', 'poison'],   // Bulbasaur
+    2: ['grass', 'poison'],   // Ivysaur
+    3: ['grass', 'poison'],   // Venusaur
+    4: ['fire'],              // Charmander
+    5: ['fire'],              // Charmeleon
+    6: ['fire', 'flying'],    // Charizard
+    7: ['water'],             // Squirtle
+    8: ['water'],             // Wartortle
+    9: ['water'],             // Blastoise
     // Generation 1 Common
-    10: 'bug',    // Caterpie
-    11: 'bug',    // Metapod
-    12: 'bug',    // Butterfree
-    13: 'bug',    // Weedle
-    14: 'bug',    // Kakuna
-    15: 'bug',    // Beedrill
-    16: 'normal', // Pidgey
-    17: 'normal', // Pidgeotto
-    18: 'normal', // Pidgeot
-    19: 'normal', // Rattata
-    20: 'normal', // Raticate
-    25: 'electric', // Pikachu
-    26: 'electric', // Raichu
-    37: 'fire',   // Vulpix
-    38: 'fire',   // Ninetales
-    39: 'normal', // Jigglypuff
-    40: 'normal', // Wigglytuff
-    50: 'ground', // Diglett
-    51: 'ground', // Dugtrio
-    52: 'normal', // Meowth
-    53: 'normal', // Persian
-    54: 'water',  // Psyduck
-    55: 'water',  // Golduck
-    58: 'fire',   // Growlithe
-    59: 'fire',   // Arcanine
-    60: 'water',  // Poliwag
-    61: 'water',  // Poliwhirl
-    62: 'water',  // Poliwrath
-    63: 'psychic', // Abra
-    64: 'psychic', // Kadabra
-    65: 'psychic', // Alakazam
-    66: 'fighting', // Machop
-    67: 'fighting', // Machoke
-    68: 'fighting', // Machamp
-    69: 'grass',   // Bellsprout
-    70: 'grass',   // Weepinbell
-    71: 'grass',   // Victreebel
-    72: 'water',  // Tentacool
-    73: 'water',  // Tentacruel
-    74: 'rock',   // Geodude
-    75: 'rock',   // Graveler
-    76: 'rock',   // Golem
-    77: 'fire',   // Ponyta
-    78: 'fire',   // Rapidash
-    79: 'water',  // Slowpoke
-    80: 'water',  // Slowbro
-    81: 'electric', // Magnemite
-    82: 'electric', // Magneton
-    90: 'water',  // Shellder
-    91: 'water',  // Cloyster
-    92: 'ghost',  // Gastly
-    93: 'ghost',  // Haunter
-    94: 'ghost',  // Gengar
-    95: 'rock',   // Onix
-    96: 'psychic', // Drowzee
-    97: 'psychic', // Hypno
-    98: 'water',  // Krabby
-    99: 'water',  // Kingler
-    100: 'electric', // Voltorb
-    101: 'electric', // Electrode
-    102: 'grass',  // Exeggcute
-    103: 'grass',  // Exeggutor
-    104: 'ground', // Cubone
-    105: 'ground', // Marowak
-    106: 'fighting', // Hitmonlee
-    107: 'fighting', // Hitmonchan
-    108: 'normal', // Lickitung
-    109: 'poison', // Koffing
-    110: 'poison', // Weezing
-    111: 'ground', // Rhyhorn
-    112: 'ground', // Rhydon
-    113: 'normal', // Chansey
-    114: 'grass',  // Tangela
-    115: 'normal', // Kangaskhan
-    116: 'water',  // Horsea
-    117: 'water',  // Seadra
-    118: 'water',  // Goldeen
-    119: 'water',  // Seaking
-    120: 'water',  // Staryu
-    121: 'water',  // Starmie
-    122: 'psychic', // Mr. Mime
-    123: 'bug',    // Scyther
-    124: 'ice',    // Jynx
-    125: 'electric', // Electabuzz
-    126: 'fire',   // Magmar
-    127: 'bug',    // Pinsir
-    128: 'normal', // Tauros
-    129: 'water',  // Magikarp
-    130: 'water',  // Gyarados
-    131: 'water',  // Lapras
-    132: 'normal', // Ditto
-    133: 'normal', // Eevee
-    134: 'water',  // Vaporeon
-    135: 'electric', // Jolteon
-    136: 'fire',   // Flareon
-    137: 'normal', // Porygon
-    138: 'rock',   // Omanyte
-    139: 'rock',   // Omastar
-    140: 'rock',   // Kabuto
-    141: 'rock',   // Kabutops
-    142: 'rock',   // Aerodactyl
-    143: 'normal', // Snorlax
-    144: 'ice',    // Articuno
-    145: 'electric', // Zapdos
-    146: 'fire',   // Moltres
-    147: 'dragon', // Dratini
-    148: 'dragon', // Dragonair
-    149: 'dragon', // Dragonite
-    150: 'psychic', // Mewtwo
-    151: 'psychic', // Mew
+    10: ['bug'],              // Caterpie
+    11: ['bug'],              // Metapod
+    12: ['bug', 'flying'],    // Butterfree
+    13: ['bug', 'poison'],    // Weedle
+    14: ['bug', 'poison'],    // Kakuna
+    15: ['bug', 'poison'],    // Beedrill
+    16: ['normal', 'flying'], // Pidgey
+    17: ['normal', 'flying'], // Pidgeotto
+    18: ['normal', 'flying'], // Pidgeot
+    19: ['normal'],           // Rattata
+    20: ['normal'],           // Raticate
+    25: ['electric'],         // Pikachu
+    26: ['electric'],         // Raichu
+    37: ['fire'],             // Vulpix
+    38: ['fire'],             // Ninetales
+    39: ['normal', 'fairy'],  // Jigglypuff
+    40: ['normal', 'fairy'],  // Wigglytuff
+    50: ['ground'],           // Diglett
+    51: ['ground'],           // Dugtrio
+    52: ['normal'],           // Meowth
+    53: ['normal'],           // Persian
+    54: ['water'],            // Psyduck
+    55: ['water'],            // Golduck
+    58: ['fire'],            // Growlithe
+    59: ['fire'],            // Arcanine
+    60: ['water'],           // Poliwag
+    61: ['water'],           // Poliwhirl
+    62: ['water', 'fighting'], // Poliwrath
+    63: ['psychic'],         // Abra
+    64: ['psychic'],         // Kadabra
+    65: ['psychic'],         // Alakazam
+    66: ['fighting'],        // Machop
+    67: ['fighting'],        // Machoke
+    68: ['fighting'],        // Machamp
+    69: ['grass', 'poison'], // Bellsprout
+    70: ['grass', 'poison'], // Weepinbell
+    71: ['grass', 'poison'], // Victreebel
+    72: ['water', 'poison'], // Tentacool
+    73: ['water', 'poison'], // Tentacruel
+    74: ['rock', 'ground'],  // Geodude
+    75: ['rock', 'ground'],  // Graveler
+    76: ['rock', 'ground'],  // Golem
+    77: ['fire'],            // Ponyta
+    78: ['fire'],            // Rapidash
+    79: ['water', 'psychic'], // Slowpoke
+    80: ['water', 'psychic'], // Slowbro
+    81: ['electric', 'steel'], // Magnemite
+    82: ['electric', 'steel'], // Magneton
+    90: ['water'],          // Shellder
+    91: ['water', 'ice'],    // Cloyster
+    92: ['ghost', 'poison'], // Gastly
+    93: ['ghost', 'poison'], // Haunter
+    94: ['ghost', 'poison'], // Gengar
+    95: ['rock', 'ground'],  // Onix
+    96: ['psychic'],         // Drowzee
+    97: ['psychic'],         // Hypno
+    98: ['water'],          // Krabby
+    99: ['water'],          // Kingler
+    100: ['electric'],       // Voltorb
+    101: ['electric'],       // Electrode
+    102: ['grass', 'psychic'], // Exeggcute
+    103: ['grass', 'psychic'], // Exeggutor
+    104: ['ground'],        // Cubone
+    105: ['ground'],        // Marowak
+    106: ['fighting'],      // Hitmonlee
+    107: ['fighting'],      // Hitmonchan
+    108: ['normal'],        // Lickitung
+    109: ['poison'],        // Koffing
+    110: ['poison'],        // Weezing
+    111: ['ground', 'rock'], // Rhyhorn
+    112: ['ground', 'rock'], // Rhydon
+    113: ['normal'],        // Chansey
+    114: ['grass'],         // Tangela
+    115: ['normal'],        // Kangaskhan
+    116: ['water'],         // Horsea
+    117: ['water'],         // Seadra
+    118: ['water'],         // Goldeen
+    119: ['water'],         // Seaking
+    120: ['water'],         // Staryu
+    121: ['water', 'psychic'], // Starmie
+    122: ['psychic', 'fairy'], // Mr. Mime
+    123: ['bug', 'flying'],  // Scyther
+    124: ['ice', 'psychic'], // Jynx
+    125: ['electric'],      // Electabuzz
+    126: ['fire'],          // Magmar
+    127: ['bug'],           // Pinsir
+    128: ['normal'],        // Tauros
+    129: ['water'],         // Magikarp
+    130: ['water', 'flying'], // Gyarados
+    131: ['water', 'ice'],   // Lapras
+    132: ['normal'],        // Ditto
+    133: ['normal'],        // Eevee
+    134: ['water'],         // Vaporeon
+    135: ['electric'],      // Jolteon
+    136: ['fire'],          // Flareon
+    137: ['normal'],        // Porygon
+    138: ['rock', 'water'],  // Omanyte
+    139: ['rock', 'water'],  // Omastar
+    140: ['rock', 'water'],  // Kabuto
+    141: ['rock', 'water'],  // Kabutops
+    142: ['rock', 'flying'], // Aerodactyl
+    143: ['normal'],        // Snorlax
+    144: ['ice', 'flying'],  // Articuno
+    145: ['electric', 'flying'], // Zapdos
+    146: ['fire', 'flying'], // Moltres
+    147: ['dragon'],        // Dratini
+    148: ['dragon'],        // Dragonair
+    149: ['dragon', 'flying'], // Dragonite
+    150: ['psychic'],       // Mewtwo
+    151: ['psychic'],       // Mew
   };
   
-  return typeMap[number] || 'normal';
+  return typeMap[number] || ['normal'];
+};
+
+// Legacy function for single type (returns first type)
+export const getPokemonTypeByNumber = (number: number): string => {
+  const types = getPokemonTypesByNumber(number);
+  return types[0];
+};
+
+// Pokemon stats mock data (until API supports it)
+export interface PokemonStats {
+  hp: number;
+  attack: number;
+  defense: number;
+  specialAttack: number;
+  specialDefense: number;
+  speed: number;
+}
+
+export interface PokemonPhysicalData {
+  weight: number; // in kg
+  height: number; // in m
+}
+
+// Mock stats data - replace with API data when available
+export const getPokemonStats = (number: number): PokemonStats => {
+  // This is placeholder data - should come from API
+  const statsMap: Record<number, PokemonStats> = {
+    12: { hp: 60, attack: 45, defense: 50, specialAttack: 90, specialDefense: 80, speed: 70 }, // Butterfree
+    4: { hp: 39, attack: 52, defense: 43, specialAttack: 60, specialDefense: 50, speed: 65 }, // Charmander
+  };
+  
+  return statsMap[number] || { hp: 50, attack: 50, defense: 50, specialAttack: 50, specialDefense: 50, speed: 50 };
+};
+
+// Mock physical data - replace with API data when available
+export const getPokemonPhysicalData = (number: number): PokemonPhysicalData => {
+  const dataMap: Record<number, PokemonPhysicalData> = {
+    12: { weight: 32.0, height: 1.1 }, // Butterfree
+    4: { weight: 8.5, height: 0.6 }, // Charmander
+  };
+  
+  return dataMap[number] || { weight: 0, height: 0 };
+};
+
+// Mock description data - replace with API data when available
+export const getPokemonDescription = (number: number): string => {
+  const descriptions: Record<number, string> = {
+    12: 'In battle, it flaps its wings at great speed to release highly toxic dust into the air.', // Butterfree
+    4: 'It has a preference for hot things. When it rains, steam is said to spout from the tip of its tail.', // Charmander
+  };
+  
+  return descriptions[number] || 'A Pokemon with unique abilities and characteristics.';
 };
 
