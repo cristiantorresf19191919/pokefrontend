@@ -1,0 +1,21 @@
+query GetPokemons($first: Int, $after: String, $sortBy: String) {
+  pokemons(first: $first, after: $after, sortBy: $sortBy) {
+    edges {
+      node {
+        id
+        name
+        number
+        imageUrl
+        types
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    totalCount
+  }
+}
+
+

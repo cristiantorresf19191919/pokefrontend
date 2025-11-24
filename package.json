@@ -2,18 +2,35 @@
   "name": "pokefrontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0 <23.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "codegen": "graphql-codegen --config codegen.yml",
+    "codegen:local": "NEXT_PUBLIC_GRAPHQL_URL=http://localhost:8082/graphql npm run codegen",
+    "codegen:prod": "NEXT_PUBLIC_GRAPHQL_URL=https://pokebackend-e8epanf7cpaje5dy.centralus-01.azurewebsites.net/graphql npm run codegen",
+    "postinstall": "npm run codegen || echo 'Codegen failed - make sure your GraphQL server is running or set NEXT_PUBLIC_GRAPHQL_URL'"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.9",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@graphql-codegen/cli": "^6.1.0",
+    "@graphql-codegen/client-preset": "^5.2.0",
+    "@mui/material": "^7.3.5",
+    "graphql": "^16.12.0",
+    "js-cookie": "^3.0.5",
     "next": "16.0.3",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

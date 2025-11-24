@@ -1,0 +1,11 @@
+overwrite: true
+schema: ${NEXT_PUBLIC_GRAPHQL_URL:-http://localhost:8082/graphql}
+documents: 
+  - "src/features/**/graphql/*.graphql"
+  - "src/**/*.{ts,tsx}"
+generates:
+  src/gql/:
+    preset: "client"
+    plugins: []
+
+
