@@ -29,10 +29,46 @@ const GET_POKEMONS = gql`
   }
 `;
 
-export const metadata: Metadata = {
-  title: 'Pokedex | Browse Pokemon',
-  description: 'Browse and explore all Pokemon in the Pokedex',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  // Fetch total count for metadata
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value;
+  
+  let totalCount = null;
+  try {
+    const { data } = await getClient(token).query({
+      query: GET_POKEMONS,
+      variables: { first: 1 },
+      fetchPolicy: 'network-only',
+    });
+    totalCount = data?.pokemons?.totalCount;
+  } catch (error) {
+    console.error('Error fetching metadata:', error);
+  }
+
+  const description = totalCount
+    ? `Browse and explore all ${totalCount} Pokemon in the complete Pokédex. Discover abilities, moves, and forms for every Pokemon.`
+    : 'Browse and explore the complete collection of Pokemon in the Pokédex. Discover abilities, moves, and forms for every Pokemon.';
+
+  return {
+    title: 'Browse All Pokemon',
+    description,
+    openGraph: {
+      title: 'Browse All Pokemon | Pokédex',
+      description,
+      type: 'website',
+      url: '/pokedex',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Browse All Pokemon | Pokédex',
+      description,
+    },
+    alternates: {
+      canonical: '/pokedex',
+    },
+  };
+}
 
 export default async function PokedexPage() {
   // Fetch initial data server-side for SEO

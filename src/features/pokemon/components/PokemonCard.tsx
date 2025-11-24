@@ -86,10 +86,11 @@ export const PokemonCard = ({ pokemon }: PokemonCardProps) => {
         >
           <Image
             src={pokemon.imageUrl}
-            alt={pokemon.name}
+            alt={`${pokemon.name} - Pokemon #${String(pokemon.number).padStart(3, '0')}`}
             fill
             style={{ objectFit: 'contain', padding: '16px' }}
             priority={false}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </CardMedia>
         <CardContent

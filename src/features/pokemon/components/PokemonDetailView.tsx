@@ -65,15 +65,16 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 } }}>
       <Fade in timeout={400}>
-        <Paper
-          sx={{
-            p: { xs: 3, md: 5 },
-            background: 'linear-gradient(145deg, #1a1a2e 0%, #151520 100%)',
-            border: '1px solid rgba(100, 181, 246, 0.15)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-          }}
-        >
-          <Grid container spacing={{ xs: 3, md: 5 }}>
+        <article itemScope itemType="https://schema.org/Thing">
+          <Paper
+            sx={{
+              p: { xs: 3, md: 5 },
+              background: 'linear-gradient(145deg, #1a1a2e 0%, #151520 100%)',
+              border: '1px solid rgba(100, 181, 246, 0.15)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            }}
+          >
+            <Grid container spacing={{ xs: 3, md: 5 }}>
             {/* Image Section */}
             <Grid item xs={12} md={5}>
               <Box
@@ -92,23 +93,26 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                   p: 3,
                 }}
               >
-                <Image
-                  src={pokemon.imageUrl}
-                  alt={pokemon.name}
-                  fill
-                  style={{ objectFit: 'contain', padding: '24px' }}
-                  priority
-                />
+              <Image
+                src={pokemon.imageUrl}
+                alt={`${pokemon.name} - Pokemon #${String(pokemon.number).padStart(3, '0')} - Official artwork`}
+                fill
+                style={{ objectFit: 'contain', padding: '24px' }}
+                priority
+                sizes="(max-width: 768px) 100vw, 500px"
+              />
               </Box>
             </Grid>
 
             {/* Details Section */}
             <Grid item xs={12} md={7}>
-              <Box>
+            <Box>
+              <header>
                 <Box sx={{ mb: 3 }}>
                   <Typography
                     variant="h3"
                     component="h1"
+                    itemProp="name"
                     sx={{
                       fontWeight: 700,
                       mb: 1,
@@ -133,10 +137,12 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                       background: alpha('#64b5f6', 0.1),
                       border: `1px solid ${alpha('#64b5f6', 0.2)}`,
                     }}
+                    itemProp="identifier"
                   >
                     #{String(pokemon.number).padStart(3, '0')}
                   </Typography>
                 </Box>
+              </header>
 
                 <Divider sx={{ my: 3, borderColor: alpha('#64b5f6', 0.1) }} />
 
@@ -269,6 +275,7 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
             </Grid>
           </Grid>
         </Paper>
+        </article>
       </Fade>
     </Container>
   );

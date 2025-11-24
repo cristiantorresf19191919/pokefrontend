@@ -4,6 +4,7 @@ import { Grid, Box, Select, MenuItem, Button, CircularProgress, Typography, Cont
 import { usePokemonList } from '../hooks/usePokemonList';
 import { usePokemonFilterStore } from '../stores/usePokemonFilterStore';
 import { PokemonCard } from './PokemonCard';
+import { PokemonSearchAutocomplete } from './PokemonSearchAutocomplete';
 import { GetPokemonsQuery } from '@/gql/graphql';
 
 interface PokedexViewProps {
@@ -41,52 +42,64 @@ export const PokedexView = ({ initialData }: PokedexViewProps) => {
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 } }}>
       {/* Header Section */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: { xs: 3, md: 4 },
-          flexWrap: 'wrap',
-          gap: 2,
-        }}
-      >
-        <Box>
-          <Typography
-            variant="h4"
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #64b5f6 0%, #9be7ff 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              mb: 0.5,
-            }}
-          >
-            Pokédex
-          </Typography>
-          {totalCount !== undefined && (
-            <Typography variant="body2" color="text.secondary">
-              {totalCount} Pokémon discovered
-            </Typography>
-          )}
-        </Box>
-        <Select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as 'name' | 'number')}
-          size="small"
+      <header>
+        <Box
           sx={{
-            minWidth: 180,
-            '& .MuiSelect-select': {
-              py: 1.5,
-            },
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: { xs: 3, md: 4 },
+            flexWrap: 'wrap',
+            gap: 2,
           }}
         >
-          <MenuItem value="number">Sort by ID</MenuItem>
-          <MenuItem value="name">Sort by Name</MenuItem>
-        </Select>
-      </Box>
+          <Box>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #64b5f6 0%, #9be7ff 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 0.5,
+              }}
+            >
+              Pokédex
+            </Typography>
+            {totalCount !== undefined && (
+              <Typography variant="body2" color="text.secondary">
+                {totalCount} Pokémon discovered
+              </Typography>
+            )}
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <PokemonSearchAutocomplete />
+            <Select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'name' | 'number')}
+              size="small"
+              sx={{
+                minWidth: 180,
+                '& .MuiSelect-select': {
+                  py: 1.5,
+                },
+              }}
+            >
+              <MenuItem value="number">Sort by ID</MenuItem>
+              <MenuItem value="name">Sort by Name</MenuItem>
+            </Select>
+          </Box>
+        </Box>
+      </header>
 
       {/* Grid Layout */}
       {pokemons.length === 0 && !isLoading ? (

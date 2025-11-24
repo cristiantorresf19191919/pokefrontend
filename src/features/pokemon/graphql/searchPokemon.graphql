@@ -1,0 +1,8 @@
+query SearchPokemon($query: String!) {
+  searchPokemon(query: $query) {
+    id
+    name
+    imageUrl
+  }
+}
+
