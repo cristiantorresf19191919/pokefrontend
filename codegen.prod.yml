@@ -1,5 +1,5 @@
 overwrite: true
-schema: http://localhost:8082/graphql
+schema: https://pokebackend-e8epanf7cpaje5dy.centralus-01.azurewebsites.net/graphql
 documents: 
   - "src/features/**/graphql/*.graphql"
   - "src/**/*.{ts,tsx}"
@@ -7,5 +7,4 @@ generates:
   src/gql/:
     preset: "client"
     plugins: []
-
 

@@ -11,9 +11,8 @@
     "start": "next start",
     "lint": "eslint",
     "codegen": "graphql-codegen --config codegen.yml",
-    "codegen:local": "NEXT_PUBLIC_GRAPHQL_URL=http://localhost:8082/graphql npm run codegen",
-    "codegen:prod": "NEXT_PUBLIC_GRAPHQL_URL=https://pokebackend-e8epanf7cpaje5dy.centralus-01.azurewebsites.net/graphql npm run codegen",
-    "postinstall": "npm run codegen || echo 'Codegen failed - make sure your GraphQL server is running or set NEXT_PUBLIC_GRAPHQL_URL'"
+    "codegen:prod": "GRAPHQL_SCHEMA_URL=https://pokebackend-e8epanf7cpaje5dy.centralus-01.azurewebsites.net/graphql graphql-codegen --config codegen.prod.yml",
+    "postinstall": "npm run codegen || echo 'Codegen failed - make sure your GraphQL server is running on http://localhost:8082/graphql'"
   },
   "dependencies": {
     "@apollo/client": "^4.0.9",
