@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:8082/graphql';
+// Determine GraphQL URL based on environment
+const getGraphQLUrl = () => {
+  // If explicitly set via environment variable, use it
+  if (process.env.NEXT_PUBLIC_GRAPHQL_URL) {
+    return process.env.NEXT_PUBLIC_GRAPHQL_URL;
+  }
+  
+  // Use localhost for development, production URL for production
+  if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === undefined) {
+    return 'http://localhost:8082/graphql';
+  }
+  
+  return 'https://pokebackend-e8epanf7cpaje5dy.centralus-01.azurewebsites.net/graphql';
+};
+
+const GRAPHQL_URL = getGraphQLUrl();
 
 export async function POST(request: NextRequest) {
   try {

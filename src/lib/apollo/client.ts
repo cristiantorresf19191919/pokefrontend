@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, HttpLink, from, ApolloLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, from, ApolloLink, Observable } from '@apollo/client';
 
 // Point to the Next.js proxy route handler instead of Spring Boot directly
 // The proxy will handle authentication via HttpOnly cookies
@@ -21,33 +21,45 @@ const loadingLink = new ApolloLink((operation, forward) => {
     globalSetLoading(true);
   }
   
-  return forward(operation).map((response) => {
-    if (typeof window !== 'undefined' && globalSetLoading) {
-      activeRequests--;
-      // Only hide loading when all requests are done
-      if (activeRequests === 0) {
-        // Small delay to prevent flickering on fast requests
-        setTimeout(() => {
+  return new Observable((observer) => {
+    const subscription = forward(operation).subscribe({
+      next: (response) => {
+        if (typeof window !== 'undefined' && globalSetLoading) {
+          activeRequests--;
+          // Only hide loading when all requests are done
           if (activeRequests === 0) {
-            globalSetLoading?.(false);
+            // Small delay to prevent flickering on fast requests
+            setTimeout(() => {
+              if (activeRequests === 0) {
+                globalSetLoading?.(false);
+              }
+            }, 100);
           }
-        }, 100);
-      }
-    }
-    return response;
-  }).catch((error) => {
-    // Handle errors - still decrement active requests
-    if (typeof window !== 'undefined' && globalSetLoading) {
-      activeRequests--;
-      if (activeRequests === 0) {
-        setTimeout(() => {
+        }
+        observer.next(response);
+      },
+      error: (error) => {
+        // Handle errors - still decrement active requests
+        if (typeof window !== 'undefined' && globalSetLoading) {
+          activeRequests--;
           if (activeRequests === 0) {
-            globalSetLoading?.(false);
+            setTimeout(() => {
+              if (activeRequests === 0) {
+                globalSetLoading?.(false);
+              }
+            }, 100);
           }
-        }, 100);
-      }
-    }
-    throw error;
+        }
+        observer.error(error);
+      },
+      complete: () => {
+        observer.complete();
+      },
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   });
 });
 

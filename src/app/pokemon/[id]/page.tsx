@@ -30,9 +30,20 @@ const GET_POKEMON_DETAILS_QUERY = `
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }> | { id: string };
 }): Promise<Metadata> {
-  const pokemonId = parseInt(params.id);
+  // Handle both Promise and direct params (Next.js 15+ compatibility)
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const pokemonId = parseInt(resolvedParams.id, 10);
+  
+  // Validate ID
+  if (isNaN(pokemonId) || pokemonId <= 0) {
+    return {
+      title: 'Pokemon Not Found | Pokédex',
+      description: 'The requested Pokemon could not be found.',
+    };
+  }
+  
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   
   try {
@@ -101,9 +112,20 @@ export async function generateMetadata({
 export default async function PokemonPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }> | { id: string };
 }) {
-  const pokemonId = parseInt(params.id);
+  // Handle both Promise and direct params (Next.js 15+ compatibility)
+  const resolvedParams = params instanceof Promise ? await params : params;
+  const pokemonId = parseInt(resolvedParams.id, 10);
+  
+  // Validate ID
+  if (isNaN(pokemonId) || pokemonId <= 0) {
+    return (
+      <>
+        <PokemonDetailView id={0} initialData={null} />
+      </>
+    );
+  }
   
   // Fetch initial data server-side for SEO using RSC client
   let initialData: GetPokemonDetailsQuery | null = null;

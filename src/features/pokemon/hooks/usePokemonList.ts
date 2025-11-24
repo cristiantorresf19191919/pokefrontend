@@ -42,7 +42,7 @@ export const usePokemonList = (initialData?: GetPokemonsQuery | null) => {
     if (initialData && !hasWrittenInitialData.current) {
       client.writeQuery({
         query: GET_POKEMONS,
-        variables: { first: 20, sortBy: 'number' },
+        variables: { first: 10, sortBy: 'number' },
         data: initialData,
       });
       hasWrittenInitialData.current = true;
@@ -55,7 +55,7 @@ export const usePokemonList = (initialData?: GetPokemonsQuery | null) => {
   // 2. Execute Apollo Query (will use cached data if available)
   const { data, loading, fetchMore, error } = useQuery(GET_POKEMONS, {
     variables: { 
-      first: 20, 
+      first: 10, 
       sortBy: sortBy // Automatically refetches when Zustand changes!
     },
     notifyOnNetworkStatusChange: true, // For smooth pagination loading states
@@ -72,7 +72,11 @@ export const usePokemonList = (initialData?: GetPokemonsQuery | null) => {
   const loadMore = () => {
     if (data?.pokemons.pageInfo.hasNextPage) {
       fetchMore({
-        variables: { after: data.pokemons.pageInfo.endCursor },
+        variables: { 
+          first: 10,
+          after: data.pokemons.pageInfo.endCursor,
+          sortBy: sortBy 
+        },
       });
     }
   };

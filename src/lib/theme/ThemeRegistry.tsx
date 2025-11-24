@@ -3,7 +3,23 @@
 import * as React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
 import { PRIMARY_COLOR, GRAYSCALE } from './pokemonTypes';
+
+// Create Emotion cache with a key that matches the server
+// Using a singleton pattern to ensure consistent cache between server and client
+let cache: ReturnType<typeof createCache> | null = null;
+
+function getCache() {
+  if (!cache) {
+    cache = createCache({
+      key: 'css',
+      prepend: true,
+    });
+  }
+  return cache;
+}
 
 const theme = createTheme({
   palette: {
@@ -223,10 +239,12 @@ const theme = createTheme({
 
 export function ThemeRegistry({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <CacheProvider value={getCache()}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </CacheProvider>
   );
 }
 

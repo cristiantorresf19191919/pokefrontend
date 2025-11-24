@@ -11,12 +11,15 @@ import {
   Toolbar,
   IconButton,
   LinearProgress,
+  Grid,
 } from '@mui/material';
 import Image from 'next/image';
 import { usePokemonDetails } from '../hooks/usePokemonDetails';
 import { GetPokemonDetailsQuery } from '@/gql/graphql';
-import { PRIMARY_COLOR, GRAYSCALE, getPokemonTypeColor } from '@/lib/theme/pokemonTypes';
+import { PRIMARY_COLOR, GRAYSCALE, POKEMON_TYPE_COLORS, getPokemonTypeByNumber, getPokemonTypeColor } from '@/lib/theme/pokemonTypes';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ScaleIcon from '@mui/icons-material/Scale';
+import HeightIcon from '@mui/icons-material/Height';
 import { useRouter } from 'next/navigation';
 
 interface PokemonDetailViewProps {
@@ -24,38 +27,36 @@ interface PokemonDetailViewProps {
   initialData?: GetPokemonDetailsQuery | null;
 }
 
-// Helper to get a color for the header based on Pokemon number
+// Helper to get a type color for the header based on Pokemon number
 const getHeaderColor = (number: number): string => {
-  // Use a simple hash to get a consistent color per Pokemon
-  const colors = [
-    '#74CB48', // Grass
-    '#F57D31', // Fire
-    '#6493EB', // Water
-    '#F9CF30', // Electric
-    '#A7B723', // Bug
-    '#A43E9E', // Poison
-    '#75574C', // Dark
-    '#705598', // Ghost
-    '#AAA67F', // Normal
-  ];
-  return colors[number % colors.length];
+  const type = getPokemonTypeByNumber(number);
+  return getPokemonTypeColor(type);
+};
+
+// Helper to get a type name for display
+const getTypeName = (number: number): string => {
+  return getPokemonTypeByNumber(number);
 };
 
 export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) => {
   const { pokemon, isLoading, error } = usePokemonDetails(id, initialData);
   const router = useRouter();
   const headerColor = pokemon ? getHeaderColor(pokemon.number) : PRIMARY_COLOR;
+  const typeName = pokemon ? getTypeName(pokemon.number) : 'normal';
+
+  const defaultHeaderColor = PRIMARY_COLOR;
+  const displayHeaderColor = pokemon ? getHeaderColor(pokemon.number) : defaultHeaderColor;
 
   if (isLoading) {
     return (
-      <Box sx={{ minHeight: '100vh', backgroundColor: GRAYSCALE.white }}>
+      <Box sx={{ minHeight: '100vh', backgroundColor: defaultHeaderColor }}>
         <Container maxWidth="sm" sx={{ py: 8 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <CircularProgress size={48} />
+            <CircularProgress size={48} sx={{ color: GRAYSCALE.white }} />
             <Typography
               variant="body2"
               sx={{
-                color: GRAYSCALE.medium,
+                color: GRAYSCALE.white,
                 fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
               }}
             >
@@ -69,7 +70,7 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
 
   if (error || !pokemon) {
     return (
-      <Box sx={{ minHeight: '100vh', backgroundColor: GRAYSCALE.white }}>
+      <Box sx={{ minHeight: '100vh', backgroundColor: defaultHeaderColor }}>
         <Container maxWidth="sm" sx={{ py: 8 }}>
           <Box
             sx={{
@@ -108,135 +109,142 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: GRAYSCALE.white }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: headerColor }}>
       <Fade in timeout={400}>
         <article itemScope itemType="https://schema.org/Thing">
-          {/* Colored Header */}
-          <AppBar
-            position="static"
+          {/* Colored Header with Pokemon Image */}
+          <Box
             sx={{
               backgroundColor: headerColor,
-              boxShadow: 'none',
-              borderRadius: 0,
+              position: 'relative',
+              minHeight: { xs: 280, sm: 320 },
+              pb: { xs: 8, sm: 10 },
             }}
           >
-            <Toolbar
+            {/* Pokeball pattern in background */}
+            <Box
               sx={{
-                px: { xs: 2, sm: 3 },
-                py: 2,
-                minHeight: { xs: '64px', sm: '72px' },
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                opacity: 0.1,
+                backgroundImage: `radial-gradient(circle at 50% 50%, transparent 40%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.1) 50%, transparent 50%)`,
+                backgroundSize: '200px 200px',
+              }}
+            />
+
+            <AppBar
+              position="static"
+              sx={{
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
               }}
             >
-              <IconButton
-                edge="start"
-                onClick={() => router.back()}
+              <Toolbar
                 sx={{
-                  color: GRAYSCALE.white,
-                  mr: 2,
+                  px: { xs: 2, sm: 3 },
+                  py: 2,
+                  minHeight: { xs: '64px', sm: '72px' },
                 }}
               >
-                <ArrowBackIcon />
-              </IconButton>
-              <Typography
-                variant="h1"
-                component="h1"
-                itemProp="name"
-                sx={{
-                  flex: 1,
-                  fontWeight: 700,
-                  fontSize: { xs: '20px', sm: '24px' },
-                  lineHeight: { xs: '28px', sm: '32px' },
-                  color: GRAYSCALE.white,
-                  textTransform: 'capitalize',
-                  fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                }}
-              >
-                {pokemon.name}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: '16px', sm: '20px' },
-                  lineHeight: { xs: '24px', sm: '28px' },
-                  color: GRAYSCALE.white,
-                  fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                }}
-                itemProp="identifier"
-              >
-                #{String(pokemon.number).padStart(3, '0')}
-              </Typography>
-            </Toolbar>
-          </AppBar>
+                <IconButton
+                  edge="start"
+                  onClick={() => router.back()}
+                  sx={{
+                    color: GRAYSCALE.white,
+                    mr: 2,
+                  }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                <Typography
+                  variant="h1"
+                  component="h1"
+                  itemProp="name"
+                  sx={{
+                    flex: 1,
+                    fontWeight: 700,
+                    fontSize: { xs: '20px', sm: '24px' },
+                    lineHeight: { xs: '28px', sm: '32px' },
+                    color: GRAYSCALE.white,
+                    textTransform: 'capitalize',
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                  }}
+                >
+                  {pokemon.name}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: { xs: '16px', sm: '20px' },
+                    lineHeight: { xs: '24px', sm: '28px' },
+                    color: GRAYSCALE.white,
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                  }}
+                  itemProp="identifier"
+                >
+                  #{String(pokemon.number).padStart(3, '0')}
+                </Typography>
+              </Toolbar>
+            </AppBar>
 
-          <Container maxWidth="sm" sx={{ px: { xs: 0, sm: 2 }, py: { xs: 2, sm: 3 } }}>
-            {/* Pokemon Image */}
+            {/* Pokemon Image - Overlapping the white card */}
             <Box
               sx={{
                 position: 'relative',
-                width: '100%',
-                aspectRatio: '1',
-                maxHeight: { xs: 300, sm: 400 },
-                backgroundColor: GRAYSCALE.background,
-                borderRadius: 0,
-                overflow: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mb: 3,
+                width: { xs: 200, sm: 250 },
+                height: { xs: 200, sm: 250 },
+                mx: 'auto',
+                mt: { xs: 2, sm: 3 },
+                zIndex: 1,
               }}
             >
               <Image
                 src={pokemon.imageUrl}
                 alt={`${pokemon.name} - Pokemon #${String(pokemon.number).padStart(3, '0')} - Official artwork`}
                 fill
-                style={{ objectFit: 'contain', padding: '24px' }}
+                style={{ objectFit: 'contain' }}
                 priority
-                sizes="(max-width: 768px) 100vw, 500px"
+                sizes="(max-width: 768px) 200px, 250px"
               />
             </Box>
+          </Box>
 
-            {/* Content Card */}
+          <Container maxWidth="sm" sx={{ px: { xs: 2, sm: 3 }, mt: { xs: -6, sm: -8 } }}>
+            {/* White Content Card */}
             <Box
               sx={{
                 backgroundColor: GRAYSCALE.white,
-                borderRadius: 2,
-                p: { xs: 2, sm: 3 },
+                borderRadius: '16px 16px 0 0',
+                p: { xs: 3, sm: 4 },
                 boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24)',
+                position: 'relative',
+                zIndex: 2,
               }}
             >
-              {/* Abilities Section */}
-              {pokemon.abilities && pokemon.abilities.length > 0 && (
-                <Box sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-                    {pokemon.abilities.map((ability) => (
-                      <Chip
-                        key={ability.name}
-                        label={ability.name}
-                        size="medium"
-                        sx={{
-                          height: 32,
-                          fontWeight: 500,
-                          fontSize: '12px',
-                          lineHeight: '16px',
-                          backgroundColor: GRAYSCALE.background,
-                          color: GRAYSCALE.dark,
-                          border: `1px solid ${GRAYSCALE.light}`,
-                          borderRadius: 1,
-                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                          '&:hover': {
-                            backgroundColor: GRAYSCALE.light,
-                          },
-                        }}
-                        title={ability.isHidden ? 'Hidden Ability' : 'Regular Ability'}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              )}
+              {/* Type Badge */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                <Chip
+                  label={typeName.charAt(0).toUpperCase() + typeName.slice(1)}
+                  sx={{
+                    height: 32,
+                    fontWeight: 700,
+                    fontSize: '12px',
+                    lineHeight: '16px',
+                    backgroundColor: headerColor,
+                    color: GRAYSCALE.white,
+                    borderRadius: '8px',
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                    px: 2,
+                  }}
+                />
+              </Box>
 
               {/* About Section */}
-              <Box sx={{ mb: 3 }}>
+              <Box sx={{ mb: 4 }}>
                 <Typography
                   variant="h3"
                   sx={{
@@ -244,119 +252,238 @@ export const PokemonDetailView = ({ id, initialData }: PokemonDetailViewProps) =
                     fontSize: '14px',
                     lineHeight: '16px',
                     textAlign: 'center',
-                    mb: 2,
+                    mb: 3,
                     color: GRAYSCALE.dark,
                     fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: -8,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '60%',
+                      height: '1px',
+                      borderBottom: `1px dashed ${headerColor}`,
+                      opacity: 0.3,
+                    },
                   }}
                 >
                   About
                 </Typography>
 
-                {/* Moves Section */}
-                {pokemon.moves && pokemon.moves.length > 0 && (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: 500,
-                        fontSize: '12px',
-                        lineHeight: '16px',
-                        color: GRAYSCALE.medium,
-                        mb: 1,
-                        fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                      }}
-                    >
-                      Moves ({pokemon.moves.length})
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 0.75,
-                        flexWrap: 'wrap',
-                        maxHeight: 200,
-                        overflowY: 'auto',
-                        p: 1,
-                        borderRadius: 1,
-                        backgroundColor: GRAYSCALE.background,
-                      }}
-                    >
-                      {pokemon.moves.slice(0, 20).map((move, index) => (
-                        <Chip
-                          key={`${move.name}-${index}`}
-                          label={
-                            move.levelLearnedAt
-                              ? `${move.name} (Lv. ${move.levelLearnedAt})`
-                              : move.name
-                          }
-                          size="small"
-                          sx={{
-                            height: 24,
-                            fontSize: '10px',
-                            lineHeight: '14px',
-                            backgroundColor: GRAYSCALE.white,
-                            color: GRAYSCALE.dark,
-                            border: `1px solid ${GRAYSCALE.light}`,
-                            borderRadius: 1,
-                            fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                            '&:hover': {
-                              backgroundColor: GRAYSCALE.background,
-                            },
-                          }}
-                        />
-                      ))}
-                      {pokemon.moves.length > 20 && (
-                        <Chip
-                          label={`+${pokemon.moves.length - 20} more`}
-                          size="small"
-                          sx={{
-                            height: 24,
-                            fontSize: '10px',
-                            backgroundColor: GRAYSCALE.background,
-                            color: GRAYSCALE.medium,
-                            fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                          }}
-                        />
-                      )}
+                {/* Weight, Height, Abilities Row */}
+                <Grid container spacing={2} sx={{ mb: 3 }}>
+                  {/* Weight */}
+                  <Grid item xs={4}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <ScaleIcon
+                        sx={{
+                          fontSize: 20,
+                          color: GRAYSCALE.dark,
+                          mb: 0.5,
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 400,
+                          fontSize: '14px',
+                          lineHeight: '16px',
+                          color: GRAYSCALE.dark,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                        }}
+                      >
+                        —
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 400,
+                          fontSize: '10px',
+                          lineHeight: '12px',
+                          color: GRAYSCALE.medium,
+                          mt: 0.5,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                        }}
+                      >
+                        Weight
+                      </Typography>
                     </Box>
-                  </Box>
-                )}
+                  </Grid>
 
-                {/* Forms Section */}
-                {pokemon.forms && pokemon.forms.length > 0 && (
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: 500,
-                        fontSize: '12px',
-                        lineHeight: '16px',
-                        color: GRAYSCALE.medium,
-                        mb: 1,
-                        fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
-                      }}
-                    >
-                      Forms ({pokemon.forms.length})
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {pokemon.forms.map((form, index) => (
-                        <Chip
-                          key={`${form.name}-${index}`}
-                          label={form.name}
-                          size="small"
+                  {/* Height */}
+                  <Grid item xs={4}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <HeightIcon
+                        sx={{
+                          fontSize: 20,
+                          color: GRAYSCALE.dark,
+                          mb: 0.5,
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 400,
+                          fontSize: '14px',
+                          lineHeight: '16px',
+                          color: GRAYSCALE.dark,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                        }}
+                      >
+                        —
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 400,
+                          fontSize: '10px',
+                          lineHeight: '12px',
+                          color: GRAYSCALE.medium,
+                          mt: 0.5,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                        }}
+                      >
+                        Height
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  {/* Abilities */}
+                  <Grid item xs={4}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Box sx={{ minHeight: 20, mb: 0.5 }}>
+                        {pokemon.abilities && pokemon.abilities.length > 0 && (
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              fontWeight: 400,
+                              fontSize: '12px',
+                              lineHeight: '16px',
+                              color: GRAYSCALE.dark,
+                              fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                            }}
+                          >
+                            {pokemon.abilities[0].name}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 400,
+                          fontSize: '10px',
+                          lineHeight: '12px',
+                          color: GRAYSCALE.medium,
+                          mt: 0.5,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                        }}
+                      >
+                        Moves
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+                {/* Description - Not available in schema, showing placeholder */}
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: GRAYSCALE.dark,
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                    textAlign: 'left',
+                    mb: 3,
+                  }}
+                >
+                  {pokemon.abilities && pokemon.abilities.length > 0
+                    ? `${pokemon.name} has ${pokemon.abilities.length} ability${pokemon.abilities.length > 1 ? 'ies' : ''}: ${pokemon.abilities.map(a => a.name).join(', ')}.`
+                    : `Information about ${pokemon.name}.`}
+                </Typography>
+              </Box>
+
+              {/* Base Stats Section */}
+              <Box>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    lineHeight: '16px',
+                    textAlign: 'center',
+                    mb: 3,
+                    color: GRAYSCALE.dark,
+                    fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: -8,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '60%',
+                      height: '1px',
+                      borderBottom: `1px dashed ${headerColor}`,
+                      opacity: 0.3,
+                    },
+                  }}
+                >
+                  Base Stats
+                </Typography>
+
+                {/* Stats List - Since we don't have stats, showing placeholder */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {['HP', 'ATK', 'DEF', 'SATK', 'SDEF', 'SPD'].map((statName) => (
+                    <Box key={statName} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          lineHeight: '16px',
+                          color: headerColor,
+                          minWidth: 50,
+                          fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
+                        }}
+                      >
+                        {statName}
+                      </Typography>
+                      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography
+                          variant="body2"
                           sx={{
-                            height: 28,
+                            fontWeight: 400,
                             fontSize: '12px',
-                            backgroundColor: GRAYSCALE.background,
+                            lineHeight: '16px',
                             color: GRAYSCALE.dark,
-                            border: `1px solid ${GRAYSCALE.light}`,
-                            borderRadius: 1,
+                            minWidth: 40,
                             fontFamily: 'var(--font-poppins), "Poppins", sans-serif',
                           }}
-                        />
-                      ))}
+                        >
+                          —
+                        </Typography>
+                        <Box sx={{ flex: 1, position: 'relative' }}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={0}
+                            sx={{
+                              height: 8,
+                              borderRadius: 4,
+                              backgroundColor: GRAYSCALE.background,
+                              '& .MuiLinearProgress-bar': {
+                                backgroundColor: headerColor,
+                                borderRadius: 4,
+                              },
+                            }}
+                          />
+                        </Box>
+                      </Box>
                     </Box>
-                  </Box>
-                )}
+                  ))}
+                </Box>
               </Box>
             </Box>
           </Container>

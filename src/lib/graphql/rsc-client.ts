@@ -1,22 +1,44 @@
 import { cookies } from 'next/headers';
 
-const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:8082/graphql';
+// Determine GraphQL URL based on environment
+const getGraphQLUrl = () => {
+  // If explicitly set via environment variable, use it
+  if (process.env.NEXT_PUBLIC_GRAPHQL_URL) {
+    return process.env.NEXT_PUBLIC_GRAPHQL_URL;
+  }
+  
+  // Use localhost for development, production URL for production
+  if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === undefined) {
+    return 'http://localhost:8082/graphql';
+  }
+  
+  return 'https://pokebackend-e8epanf7cpaje5dy.centralus-01.azurewebsites.net/graphql';
+};
+
+const GRAPHQL_URL = getGraphQLUrl();
 
 /**
  * Server-side GraphQL client for React Server Components
  * Reads the auth token from HttpOnly cookies and makes authenticated requests
  */
-export async function executeGraphQL<T = any>({
+export async function executeGraphQL<T = unknown>({
   query,
   variables,
 }: {
   query: string;
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
 }): Promise<{ data?: T; errors?: Array<{ message: string }> }> {
   try {
     // Read the HttpOnly cookie
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
+
+    // Filter out null/undefined values from variables to prevent GraphQL validation errors
+    const cleanedVariables = variables
+      ? Object.fromEntries(
+          Object.entries(variables).filter(([, value]) => value != null)
+        )
+      : {};
 
     const response = await fetch(GRAPHQL_URL, {
       method: 'POST',
@@ -26,7 +48,7 @@ export async function executeGraphQL<T = any>({
       },
       body: JSON.stringify({
         query,
-        variables: variables || {},
+        variables: cleanedVariables,
       }),
       // Important: disable caching for authenticated requests
       cache: 'no-store',
@@ -38,7 +60,7 @@ export async function executeGraphQL<T = any>({
 
     const result = await response.json();
 
-    if (result.errors) {
+    if (result.errors && result.errors.length > 0) {
       console.error('GraphQL errors:', result.errors);
     }
 

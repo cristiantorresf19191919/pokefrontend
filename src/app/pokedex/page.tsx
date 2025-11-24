@@ -72,7 +72,7 @@ export default async function PokedexPage() {
     const result = await executeGraphQL<GetPokemonsQuery>({
       query: GET_POKEMONS_QUERY,
       variables: { 
-        first: 20, 
+        first: 10, 
         sortBy: 'number' // Default sort
       },
     });
